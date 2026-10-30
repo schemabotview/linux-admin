@@ -1,0 +1,26 @@
+{
+ "note": "7.3: the team's site: a page, a server block, enabled by a link; the default site disabled.",
+ "upload": {
+  "lab/files/sysops.example": "/tmp/sysops.example"
+ },
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "echo '<h1>sysops.example</h1>' > /srv/sysops.example/index.html",
+  {
+   "cmd": "sudo cp /tmp/sysops.example /etc/nginx/sites-available/",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "cat /etc/nginx/sites-available/sysops.example",
+  "sudo ln -s /etc/nginx/sites-available/sysops.example /etc/nginx/sites-enabled/",
+  "sudo rm /etc/nginx/sites-enabled/default",
+  "ls -l /etc/nginx/sites-enabled"
+ ]
+}

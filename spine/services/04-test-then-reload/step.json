@@ -1,0 +1,29 @@
+{
+ "note": "7.4: nginx -t, reload, the site answers; then a typo (root without its ;): -t refuses it, restart takes the site down; fixed, started.",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  {
+   "cmd": "sudo nginx -t",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "sudo systemctl reload nginx",
+  "curl -s localhost",
+  "sudo sed -i 's|root /srv/sysops.example;|root /srv/sysops.example|' /etc/nginx/sites-available/sysops.example",
+  "sudo nginx -t",
+  "sudo systemctl restart nginx",
+  "systemctl is-active nginx",
+  "curl -sS localhost",
+  "sudo sed -i 's|root /srv/sysops.example$|root /srv/sysops.example;|' /etc/nginx/sites-available/sysops.example",
+  "sudo nginx -t",
+  "sudo systemctl start nginx",
+  "curl -s localhost"
+ ]
+}

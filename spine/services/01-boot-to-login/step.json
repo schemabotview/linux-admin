@@ -1,0 +1,28 @@
+{
+ "note": "7.1 (full scene): a real reboot; the default target; what multi-user wants; systemd-analyze.",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  {
+   "cmd": "sudo systemctl reboot",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops",
+   "wait": "sysops@ops:~\\$ $"
+  },
+  {
+   "cmd": "until ssh -o ConnectTimeout=5 web-01 true 2> /dev/null; do sleep 5; done; ssh web-01",
+   "wait": "sysops@web-01:~\\$ $"
+  },
+  "systemctl get-default",
+  "systemd-analyze",
+  "systemctl list-dependencies --plain --no-pager multi-user.target | grep -E 'nginx|ssh|cron|getty'",
+  "systemctl is-active nginx"
+ ]
+}

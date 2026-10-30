@@ -45,6 +45,7 @@ ALT = re.compile(rb'(\x1b\[\?(?:1049|1047|47)[hl])')
 ALT_ON = {b'\x1b[?1049h', b'\x1b[?1047h', b'\x1b[?47h'}
 ALT_OFF = {b'\x1b[?1049l', b'\x1b[?1047l', b'\x1b[?47l'}
 DECSTBM = re.compile(rb'\x1b\[\d*(?:;\d*)?r')
+SGR_COLON = re.compile(rb'\x1b\[[0-9;:]*:[0-9;:]*m')
 
 
 def setup_ops() -> None:
@@ -110,6 +111,7 @@ class Console:
 
     # -- io --------------------------------------------------------------------------------------
     def _pump(self, timeout: float) -> bool:
+        """Read what the pty drew and feed both screens."""
         r, _, _ = select.select([self.fd], [], [], timeout)
         if not r:
             return False
@@ -117,6 +119,9 @@ class Console:
             data = os.read(self.fd, 65536)
         except OSError:
             return False
+        # systemd colours with COLON sub-parameters (ESC[38:5:245m); pyte reads only semicolons and
+        # would print the rest as text ("5:245m"). Same colour, written the older way.
+        data = SGR_COLON.sub(lambda m: m.group(0).replace(b':', b';'), data)
         # The grab screen follows xterm: entering the alternate screen CLEARS it (the cursor stays).
         for part in ALT.split(data):
             if part in ALT_ON:

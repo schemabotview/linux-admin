@@ -1,0 +1,26 @@
+sysops@web-01:~$ sudo cp /tmp/report.timer /etc/systemd/system/
+[sudo] password for sysops:
+sysops@web-01:~$ cat /etc/systemd/system/report.timer
+[Unit]
+Description=Refresh the status report every hour
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+sysops@web-01:~$ sudo systemctl daemon-reload
+sysops@web-01:~$ sudo systemctl enable --now report.timer
+Created symlink '/etc/systemd/system/timers.target.wants/report.timer' → '/etc/s
+ystemd/system/report.timer'.
+sysops@web-01:~$ systemctl list-timers report.timer --no-pager
+NEXT                         LEFT LAST PASSED UNIT         ACTIVATES
+Mon 2026-11-02 10:00:00 UTC 39min -         - report.timer report.service
+
+1 timers listed.
+Pass --all to see loaded but inactive timers, too.
+sysops@web-01:~$ systemctl is-enabled report.timer report.service
+enabled
+static
+sysops@web-01:~$

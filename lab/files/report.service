@@ -1,0 +1,10 @@
+[Unit]
+Description=Count the site's responses by status code
+
+[Service]
+Type=oneshot
+User=deploy
+SupplementaryGroups=adm
+ExecStart=/bin/sh -c 'cut -d " " -f 9 \
+    /var/log/nginx/sysops.example.access.log \
+    | sort | uniq -c > /srv/sysops.example/status.txt'

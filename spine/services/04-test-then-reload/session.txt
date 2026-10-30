@@ -1,0 +1,31 @@
+sysops@web-01:~$ sudo nginx -t
+[sudo] password for sysops:
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+sysops@web-01:~$ sudo systemctl reload nginx
+sysops@web-01:~$ curl -s localhost
+<h1>sysops.example</h1>
+sysops@web-01:~$ sudo sed -i 's|root /srv/sysops.example;|root /srv/sysops.examp
+le|' /etc/nginx/sites-available/sysops.example
+sysops@web-01:~$ sudo nginx -t
+2026/11/02 09:18:51 [emerg] 815#815: invalid number of arguments in "root" direc
+tive in /etc/nginx/sites-enabled/sysops.example:6
+nginx: configuration file /etc/nginx/nginx.conf test failed
+sysops@web-01:~$ sudo systemctl restart nginx
+Job for nginx.service failed because the control process exited with error code.
+See "systemctl status nginx.service" and "journalctl -xeu nginx.service" for det
+ails.
+sysops@web-01:~$ systemctl is-active nginx
+failed
+sysops@web-01:~$ curl -sS localhost
+curl: (7) Failed to connect to localhost port 80 after 18 ms: Could not connect
+to server
+sysops@web-01:~$ sudo sed -i 's|root /srv/sysops.example$|root /srv/sysops.examp
+le;|' /etc/nginx/sites-available/sysops.example
+sysops@web-01:~$ sudo nginx -t
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+sysops@web-01:~$ sudo systemctl start nginx
+sysops@web-01:~$ curl -s localhost
+<h1>sysops.example</h1>
+sysops@web-01:~$

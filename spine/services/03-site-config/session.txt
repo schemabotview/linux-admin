@@ -1,0 +1,25 @@
+sysops@web-01:~$ echo '<h1>sysops.example</h1>' > /srv/sysops.example/index.html
+sysops@web-01:~$ sudo cp /tmp/sysops.example /etc/nginx/sites-available/
+[sudo] password for sysops:
+sysops@web-01:~$ cat /etc/nginx/sites-available/sysops.example
+server {
+    listen 80 default_server;
+    server_name sysops.example;
+
+    root /srv/sysops.example;
+    index index.html;
+
+    access_log /var/log/nginx/sysops.example.access.log;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+sysops@web-01:~$ sudo ln -s /etc/nginx/sites-available/sysops.example /etc/nginx
+/sites-enabled/
+sysops@web-01:~$ sudo rm /etc/nginx/sites-enabled/default
+sysops@web-01:~$ ls -l /etc/nginx/sites-enabled
+total 0
+lrwxrwxrwx 1 root root 41 Nov  2 09:18 sysops.example -> /etc/nginx/sites-availa
+ble/sysops.example
+sysops@web-01:~$

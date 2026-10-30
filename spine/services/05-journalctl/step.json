@@ -1,0 +1,16 @@
+{
+ "note": "7.5: the journal: nginx's own history, sudo's record, priorities, its size.",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "journalctl -u nginx --no-pager | tail -n 12",
+  "journalctl -u nginx -p err --no-pager | tail -n 4",
+  "journalctl _COMM=sudo --no-pager | tail -n 4",
+  "journalctl --disk-usage"
+ ]
+}

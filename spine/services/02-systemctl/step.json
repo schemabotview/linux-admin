@@ -1,0 +1,25 @@
+{
+ "note": "7.2: status, stop, start, enable \u2014 and what a stopped nginx looks like from outside.",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "systemctl status nginx --no-pager",
+  {
+   "cmd": "sudo systemctl stop nginx",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "systemctl is-active nginx",
+  "curl -sS -I localhost",
+  "sudo systemctl start nginx",
+  "systemctl is-active nginx",
+  "systemctl is-enabled nginx ssh"
+ ]
+}

@@ -1,0 +1,33 @@
+sysops@web-01:~$ sudo systemctl reboot
+[sudo] password for sysops:
+Connection to web-01 closed by remote host.
+Connection to web-01 closed.
+sysops@ops:~$ until ssh -o ConnectTimeout=5 web-01 true 2> /dev/null; do sleep 5
+; done; ssh web-01
+Linux web-01 6.12.113+deb13-cloud-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.113-1
+ (2026-10-15) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Mon Nov  2 09:16:03 2026 from 10.0.2.2
+sysops@web-01:~$ systemctl get-default
+graphical.target
+sysops@web-01:~$ systemd-analyze
+Startup finished in 19.447s (kernel) + 44.481s (userspace) = 1min 3.929s
+graphical.target reached after 43.758s in userspace.
+sysops@web-01:~$ systemctl list-dependencies --plain --no-pager multi-user.targe
+t | grep -E 'nginx|ssh|cron|getty'
+  nginx.service
+  ssh.service
+  sshd-unix-local.socket
+  getty.target
+  getty-static.service
+  getty@tty1.service
+  serial-getty@ttyS0.service
+sysops@web-01:~$ systemctl is-active nginx
+active
+sysops@web-01:~$

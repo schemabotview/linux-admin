@@ -1,0 +1,32 @@
+sysops@web-01:~$ for i in 1 2 3; do curl -s -o /dev/null localhost; done; curl -
+s -o /dev/null localhost/missing
+sysops@web-01:~$ sudo cp /tmp/report.service /etc/systemd/system/
+[sudo] password for sysops:
+sysops@web-01:~$ cat /etc/systemd/system/report.service
+[Unit]
+Description=Count the site's responses by status code
+
+[Service]
+Type=oneshot
+User=deploy
+SupplementaryGroups=adm
+ExecStart=/bin/sh -c 'cut -d " " -f 9 \
+    /var/log/nginx/sysops.example.access.log \
+    | sort | uniq -c > /srv/sysops.example/status.txt'
+sysops@web-01:~$ sudo systemctl daemon-reload
+sysops@web-01:~$ sudo systemctl start report
+sysops@web-01:~$ systemctl status report --no-pager
+○ report.service - Count the site's responses by status code
+     Loaded: loaded (/etc/systemd/system/report.service; static)
+     Active: inactive (dead)
+
+Nov 02 09:19:49 web-01 systemd[1]: Starting report.service - Count the site…e...
+Nov 02 09:19:50 web-01 systemd[1]: report.service: Deactivated successfully.
+Nov 02 09:19:50 web-01 systemd[1]: Finished report.service - Count the site…ode.
+Hint: Some lines were ellipsized, use -l to show in full.
+sysops@web-01:~$ cat /srv/sysops.example/status.txt
+      5 200
+      1 404
+sysops@web-01:~$ ls -l /srv/sysops.example/status.txt
+-rw-r--r-- 1 deploy site 24 Nov  2 09:19 /srv/sysops.example/status.txt
+sysops@web-01:~$

@@ -1,0 +1,13 @@
+server {
+    listen 80 default_server;
+    server_name sysops.example;
+
+    root /srv/sysops.example;
+    index index.html;
+
+    access_log /var/log/nginx/sysops.example.access.log;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}

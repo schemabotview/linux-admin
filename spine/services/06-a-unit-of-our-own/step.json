@@ -1,0 +1,29 @@
+{
+ "note": "7.6: report.service, a oneshot unit as deploy: daemon-reload, start, status, its output served.",
+ "volatile": true,
+ "upload": {
+  "lab/files/report.service": "/tmp/report.service"
+ },
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "for i in 1 2 3; do curl -s -o /dev/null localhost; done; curl -s -o /dev/null localhost/missing",
+  {
+   "cmd": "sudo cp /tmp/report.service /etc/systemd/system/",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "cat /etc/systemd/system/report.service",
+  "sudo systemctl daemon-reload",
+  "sudo systemctl start report",
+  "systemctl status report --no-pager",
+  "cat /srv/sysops.example/status.txt",
+  "ls -l /srv/sysops.example/status.txt"
+ ]
+}
