@@ -1,0 +1,25 @@
+{
+ "note": "6.3: top's screen (a tty grab). top redraws every 3 s: grabs wait for 1.5 s of quiet, never more. Debian's top leaves its last screen in the terminal (no alternate screen).",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  {
+   "keys": "top\\r",
+   "quiet": 1.5
+  },
+  {
+   "grab": "top",
+   "quiet": 1.5
+  },
+  {
+   "keys": "q",
+   "quiet": 1.5
+  },
+  "uptime"
+ ]
+}

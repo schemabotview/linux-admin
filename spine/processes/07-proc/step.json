@@ -1,0 +1,18 @@
+{
+ "note": "6.7: a process as files under /proc; the system's own numbers there.",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "head -n 9 /proc/$$/status",
+  "ls -l /proc/$$/cwd",
+  "tr '\\0' ' ' < /proc/$$/cmdline; echo",
+  "cat /proc/loadavg",
+  "head -n 3 /proc/meminfo",
+  "cat /proc/uptime"
+ ]
+}

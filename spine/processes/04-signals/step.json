@@ -1,0 +1,24 @@
+{
+ "note": "6.4: TERM asks, STOP pauses, CONT resumes, KILL cannot be refused.",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "kill -l TERM KILL STOP CONT HUP",
+  "sleep 1000 &",
+  "ps -o pid,stat,cmd -C sleep",
+  "kill %1",
+  "jobs",
+  "sleep 1000 &",
+  "kill -STOP %1",
+  "ps -o pid,stat,cmd -C sleep",
+  "kill -CONT %1",
+  "ps -o pid,stat,cmd -C sleep",
+  "kill -KILL %1",
+  "jobs"
+ ]
+}

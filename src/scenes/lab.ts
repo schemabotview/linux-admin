@@ -28,7 +28,8 @@ export function outputOf(session: string, command: string): string {
     if (!prompt.test(rows[i])) continue
     let line = rows[i], j = i
     while (rows[j].length === 80 && j + 1 < rows.length) line += rows[++j]
-    if (!line.endsWith(command)) continue
+    // the command EXACTLY, right after the prompt: `bash -c '…'` must not match `X=1 bash -c '…'`
+    if (!line.endsWith(`$ ${command}`) && !line.endsWith(`# ${command}`)) continue
     const end = rows.findIndex((r, k) => k > j && prompt.test(r))
     return rows.slice(j + 1, end < 0 ? undefined : end).join('\n')
   }

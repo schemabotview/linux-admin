@@ -1,0 +1,35 @@
+{
+ "note": "6.5: foreground, Ctrl-Z, bg, &, jobs -l, fg and Ctrl-C.",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  {
+   "keys": "sleep 300\\r",
+   "quiet": 2
+  },
+  {
+   "keys": "\\x1a",
+   "quiet": 2
+  },
+  "jobs",
+  "bg",
+  "sleep 200 &",
+  "jobs -l",
+  {
+   "keys": "fg %2\\r",
+   "quiet": 2
+  },
+  {
+   "keys": "\\x03",
+   "quiet": 2
+  },
+  "jobs",
+  "kill %1",
+  "jobs"
+ ]
+}

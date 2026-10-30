@@ -1,0 +1,21 @@
+sysops@web-01:~$ sleep 300
+^Z
+[1]+  Stopped                 sleep 300
+sysops@web-01:~$ jobs
+[1]+  Stopped                 sleep 300
+sysops@web-01:~$ bg
+[1]+ sleep 300 &
+sysops@web-01:~$ sleep 200 &
+[2] 1790
+sysops@web-01:~$ jobs -l
+[1]-  1788 Running                 sleep 300 &
+[2]+  1790 Running                 sleep 200 &
+sysops@web-01:~$ fg %2
+sleep 200
+^C
+sysops@web-01:~$ jobs
+[1]+  Running                 sleep 300 &
+sysops@web-01:~$ kill %1
+sysops@web-01:~$ jobs
+[1]+  Terminated              sleep 300
+sysops@web-01:~$

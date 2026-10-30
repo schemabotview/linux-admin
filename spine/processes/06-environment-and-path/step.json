@@ -1,0 +1,21 @@
+{
+ "note": "6.6: variables, PATH lookup, builtins, why nginx is not found, a variable for one child, export.",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "printenv HOME USER SHELL",
+  "echo $PATH",
+  "type ls cd",
+  "nginx -v",
+  "ls -l /usr/sbin/nginx",
+  "/usr/sbin/nginx -v",
+  "GREETING=hello bash -c 'echo [$GREETING]'",
+  "echo [$GREETING]",
+  "export GREETING=hi",
+  "bash -c 'echo [$GREETING]'"
+ ]
+}

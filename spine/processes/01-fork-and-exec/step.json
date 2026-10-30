@@ -1,0 +1,16 @@
+{
+ "note": "6.1 (full scene): the shell's PID, a child's PID and PPID, ps showing the shell's children, /proc/<pid>/exe.",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "echo $$",
+  "bash -c 'echo child $$ parent $PPID'",
+  "ps -o pid,ppid,comm",
+  "ls -l /proc/$$/exe"
+ ]
+}

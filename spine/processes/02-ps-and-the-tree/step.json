@@ -1,0 +1,16 @@
+{
+ "note": "6.2: the ancestry of this shell, nginx's master and workers, the biggest processes.",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "pstree -s $$",
+  "ps -o user,pid,ppid,cmd -C nginx",
+  "ps aux --sort=-rss | head -n 5",
+  "ps -e --no-headers | wc -l"
+ ]
+}

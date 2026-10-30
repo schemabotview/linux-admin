@@ -4,10 +4,11 @@ import { shellScenes } from './shell'
 import { packagesScenes } from './packages'
 import { textScenes } from './text'
 import { usersScenes } from './users'
+import { processesScenes } from './processes'
 
 // Scene registry, grouped by course (one folder each, mirroring src/content). Ids are globally
 // unique: a duplicate THROWS rather than letting one course's scene shadow another's.
-const GROUPS: Record<string, SceneModel>[] = [introScenes, shellScenes, packagesScenes, textScenes, usersScenes]
+const GROUPS: Record<string, SceneModel>[] = [introScenes, shellScenes, packagesScenes, textScenes, usersScenes, processesScenes]
 
 export const SCENES: Record<string, SceneModel> = {}
 for (const group of GROUPS)

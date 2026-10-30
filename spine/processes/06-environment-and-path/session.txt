@@ -1,0 +1,23 @@
+sysops@web-01:~$ printenv HOME USER SHELL
+/home/sysops
+sysops
+/bin/bash
+sysops@web-01:~$ echo $PATH
+/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games
+sysops@web-01:~$ type ls cd
+ls is aliased to `ls --color=auto'
+cd is a shell builtin
+sysops@web-01:~$ nginx -v
+-bash: nginx: command not found
+sysops@web-01:~$ ls -l /usr/sbin/nginx
+-rwxr-xr-x 1 root root 1491464 Oct 15 01:08 /usr/sbin/nginx
+sysops@web-01:~$ /usr/sbin/nginx -v
+nginx version: nginx/1.26.3
+sysops@web-01:~$ GREETING=hello bash -c 'echo [$GREETING]'
+[hello]
+sysops@web-01:~$ echo [$GREETING]
+[]
+sysops@web-01:~$ export GREETING=hi
+sysops@web-01:~$ bash -c 'echo [$GREETING]'
+[hi]
+sysops@web-01:~$
