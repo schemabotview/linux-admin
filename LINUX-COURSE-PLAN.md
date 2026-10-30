@@ -1,12 +1,12 @@
 # Learn Linux administration by running a web server — plan
 
-**Status: v2 plan, awaiting owner review (2026-10-30).** Nothing is authored yet.
+**Status: v3 plan (2026-10-30): x86_64, one VM at a time, one vim section.** Authoring of courses 1–2 has begun.
 
 ## The idea
 
 One project: the **Sysops team** serves **`sysops.example`**. It starts from a fresh VM reached over
-SSH and ends with two hardened, monitored servers, one Debian and one Rocky, serving the same site
-over HTTPS. Each Linux feature is taught **when the server first needs it**. Background topics (the
+SSH and ends with a hardened, monitored Debian server serving the site over HTTPS, then does the
+same job on Rocky Linux to learn the other family. Each Linux feature is taught **when the server first needs it**. Background topics (the
 kernel, `fork`/`exec`, a packet's path) appear as short detours at the moment they answer a question
 on screen. They are never front-loaded.
 
@@ -16,7 +16,7 @@ Why a web server:
 - **Each need pulls in a topic**: reading logs needs pipes and `grep`, the team's site directory needs
   permissions and groups, nginx needs packages and systemd, HTTPS needs the network, a firewall and
   a certificate, a full disk needs storage, the 403 on Rocky needs SELinux.
-- **The ending is checkable**: `curl https://sysops.example` answers from both machines.
+- **The ending is checkable**: `curl https://sysops.example` answers, on Debian and then on Rocky.
 
 Engine `@graphlearning/graphl-flow` (≥ 0.8: consoles, Debian/Red Hat prompts, `tty` screens,
 `ini`/`nginx`/`nft` highlighting, Linux icons), shell `@graphlearning/shell` (1.x), both pinned.
@@ -31,19 +31,20 @@ fixtures are real captures from Debian 13 and Rocky 10.2 VMs.
 | `sysops` | the team's login on every machine (prompt `sysops@web-01:~$`) |
 | `sysops` (group) | the team; owns `/srv/sysops.example` (setgid, course 4) |
 | `deploy` | a service account added in course 4, used by the deploy script (course 10) |
-| `ops` | the team's admin box (Debian 13): where every session starts, `ssh web-01` |
-| `web-01` | Debian 13 "trixie", the first web server (courses 1–10) |
-| `web-02` | Rocky Linux 10.2, the second web server (course 11) |
+| `ops` | the team's workstation: where every session starts, `ssh web-01`. **Not a VM** — a shell on the lab host in its own UTS namespace (hostname `ops`), so it costs nothing |
+| `web-01` | Debian 13 "trixie", x86_64, the web server of courses 1–10 |
+| `web-02` | Rocky Linux 10.2, x86_64, the web server of course 11 |
 
-`ops` also hosts the lab's infrastructure, which the course shows only where it is the subject:
-DNS (`sysops.example` → the web servers), a local ACME server (Pebble, `acme.ops:14000`) for
-certbot, and the package mirrors (below). Nothing in a replay reaches the internet.
+**Exactly one VM runs at a time.** `web-01` is shut down before course 11 starts `web-02`. The lab's
+infrastructure runs as plain processes on the lab host, reached from the VM through QEMU's gateway,
+and the course shows it only where it is the subject: DNS (`sysops.example` → the VM), a local ACME
+server (Pebble) for certbot, and the package mirrors (below). Nothing in a replay reaches the internet.
 
 ## Packaging for YouTube
 
 One video, **"Linux administration: full course, beginner to professional"**: all 11 courses,
 67 sections, about 1 h 45 min. A course is one chapter group and the owner's review unit. A section
-(~90 s) is one chapter. The video opens with the finished `curl` on both servers. It is published
+(~90 s) is one chapter. The video opens with the finished `curl`. It is published
 only when all 11 courses are recorded. Each section can also go out as a Short (`record-reels`).
 
 ## Every output is real
@@ -82,12 +83,11 @@ section, each built on the previous one's end state:
 
 ```
 base ──▶ intro/01 ──▶ intro/02 ──▶ shell/01 ──▶ … ──▶ storage/06 ──▶ … ──▶ rhel/07
-          (snapshot = every running VM, taken together)
+          (snapshot = the one running VM + its host-side service state)
 ```
 
-- **A snapshot is the whole lab at one moment**: `ops` + `web-01` (+ `web-02` from course 11),
-  disks **and** RAM, taken together so TCP sessions, the ACME server's state and running services
-  stay consistent. Disks are qcow2 overlays (each section's disk is a copy-on-write layer over its
+- **A snapshot is the one VM at one moment**, disk **and** RAM, plus the state of the host-side
+  services that belong with it (the ACME server's account and certificate database). Disks are qcow2 overlays (each section's disk is a copy-on-write layer over its
   parent's, so it costs only what changed). RAM is QEMU's saved VM state, so a section **resumes**
   in 1–3 s with its services already running instead of booting.
 - **Replaying section N** = restore snapshot N−1 → run N's steps → save snapshot N. The cost is
@@ -104,8 +104,8 @@ base ──▶ intro/01 ──▶ intro/02 ──▶ shell/01 ──▶ … ─�
   so the next section builds on the healthy server. This is the expense tracker's rule ("experiments
   go in the REPL, never into `main.py`") applied to a machine. A section that fixes the damage
   replays the break and the fix together.
-- **Base images** are built once: pinned cloud image + a fixed cloud-init seed (hostnames, static
-  IPs `10.20.0.10/11/12`, fixed MACs, the `sysops` user, **fixed SSH host keys** so fingerprints
+- **Base images** are built once: pinned x86_64 cloud image + a fixed cloud-init seed (hostname,
+  a fixed MAC and address, the `sysops` user, **fixed SSH host keys** so fingerprints
   never change between replays), cloud-init then disabled. Rebuilding a base invalidates its chain.
 
 ### Determinism
@@ -121,7 +121,7 @@ base ──▶ intro/01 ──▶ intro/02 ──▶ shell/01 ──▶ … ─�
 
 ### Capture
 
-A host-side driver runs `ssh sysops@ops` in an 80 × 43 pty and drives it with typed keystrokes,
+A host-side driver opens the `ops` shell in an 80 × 43 pty and drives it with typed keystrokes,
 waiting on the prompt regex. A terminal emulator (`pyte`) records exactly what was drawn: rows,
 wraps and blank rows go to `session.txt`, and for a full-screen program (`top`, `less`, `man`,
 `vim`) the screen buffer with its inverse/bold runs is written as a `tty` capture. That is the
@@ -136,7 +136,8 @@ by text, never typed as line numbers.
 
 ### Where it runs, and how long it takes
 
-The replay needs hardware virtualization: **KVM on Linux, HVF on macOS**. This cloud container has no
+The replay needs hardware virtualization: **KVM on an x86_64 Linux host** (or an x86_64 Mac with
+HVF; on Apple Silicon an x86_64 guest is emulated and slow). This cloud container has no
 `/dev/kvm`, and pure emulation (TCG) is 5–10× slower, so replays run on the owner's machine and
 the repo commits the transcripts (not the VM images). Content checks, render and capture run anywhere.
 
@@ -165,7 +166,7 @@ Branch sections (run, then discarded) are marked ⑂.
 | # | Section | Picture |
 | --- | --- | --- |
 | 1 | What Linux is: kernel and distribution | distro → kernel → machine; `uname -r` and `os-release` |
-| 2 | What we'll build | the map: ops → SSH → web-01 / web-02 → HTTPS; the finished `curl` |
+| 2 | What we'll build | the map: ops → SSH → web-01 → HTTPS, then the same on web-02; the finished `curl` |
 
 **2. `shell` · Find your way around · 7**
 
@@ -272,8 +273,7 @@ Branch sections (run, then discarded) are marked ⑂.
 
 **11. `rhel` · The other family: Rocky Linux · 7**
 
-`web-02` joins the lab here: its chain starts from the Rocky base image while `ops` and `web-01`
-keep theirs.
+`web-01` is shut down and `web-02` starts its own chain from the Rocky base image (still one VM).
 
 | # | Section | Picture |
 | --- | --- | --- |
@@ -283,7 +283,7 @@ keep theirs.
 | 4 | ⑂ The 403 | the symptoms; `rwx` says allowed |
 | 5 | SELinux: labels | two checks, both must pass |
 | 6 | `restorecon` and `semanage fcontext` (replays the 403 and the fix) | the label before/after; why `mv` kept the wrong label |
-| 7 | Both servers, end to end | the map, every stage lit; `curl` on both |
+| 7 | One site, two families | the map, every stage lit; the same checks on Debian (course 10's end) and on Rocky |
 
 The final narration closes the film with what the team built. It does not claim the viewer is now
 an administrator.
@@ -296,9 +296,9 @@ npm run check:spine                                  # nothing stale; transcript
 npm run shots -- <course>                            # then LOOK
 ```
 
-## Open decisions
+## Decided (2026-10-30)
 
-1. **Architecture.** If replays run on Apple Silicon, aarch64 images are fast under HVF and x86_64
-   images are emulated and slow. aarch64 means `uname -m` prints `aarch64` on screen, while most
-   servers a learner meets are x86_64. Pick one for the whole film.
-2. **vim depth**: one section (as planned) or a short detour per mode.
+- **x86_64** for the whole film.
+- **One vim section** (3.7).
+- **One VM at a time**; `ops` is a namespace on the host, the lab services are host processes.
+- **Rocky is the final course**; repo `schemabotview/linux-admin`.
