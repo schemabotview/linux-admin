@@ -8,6 +8,7 @@ import { services } from './services'
 import { network } from './network'
 import { storage } from './storage'
 import { scripting } from './scripting'
+import { rhel } from './rhel'
 import type { Course, Section } from './types'
 
 // Course registry, in syllabus order (LINUX-COURSE-PLAN.md). A course is registered only once it is authored.
@@ -22,6 +23,7 @@ export const COURSES: Record<string, Course> = {
   [network.id]: network,
   [storage.id]: storage,
   [scripting.id]: scripting,
+  [rhel.id]: rhel,
 }
 
 export type { Course, Section }

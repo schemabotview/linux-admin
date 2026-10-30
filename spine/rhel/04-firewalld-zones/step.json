@@ -1,0 +1,51 @@
+{
+ "note": "11.3b: firewalld enabled; the zone's services; port 80 closed from ops; http and https added; the nftables it writes; open again.",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-02",
+    "clear"
+   ]
+  },
+  {
+   "cmd": "sudo systemctl enable --now firewalld",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "sudo firewall-cmd --get-active-zones",
+  "sudo firewall-cmd --list-services",
+  {
+   "cmd": "exit",
+   "wait": "sysops@ops:~\\$ $"
+  },
+  {
+   "cmd": "curl -sS -m 10 -o /dev/null -w '%{http_code}\\n' http://web-02/",
+   "wait": "sysops@ops:~\\$ $"
+  },
+  {
+   "cmd": "ssh web-02",
+   "wait": "\\]\\$ $"
+  },
+  {
+   "cmd": "sudo firewall-cmd --permanent --add-service=http --add-service=https",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "sudo firewall-cmd --reload",
+  "sudo firewall-cmd --list-services",
+  "sudo nft list ruleset | grep -E 'dport (80|443)'",
+  {
+   "cmd": "exit",
+   "wait": "sysops@ops:~\\$ $"
+  },
+  {
+   "cmd": "curl -sS -m 10 -o /dev/null -w '%{http_code}\\n' http://web-02/",
+   "wait": "sysops@ops:~\\$ $"
+  }
+ ]
+}

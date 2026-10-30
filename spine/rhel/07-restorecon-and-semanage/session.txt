@@ -1,0 +1,20 @@
+[sysops@web-02 ~]$ sudo dnf install -y -q policycoreutils-python-utils > /dev/nu
+ll
+[sudo] password for sysops:
+[sysops@web-02 ~]$ sudo semanage fcontext -a -t httpd_sys_content_t '/srv/sysops
+.example(/.*)?'
+[sysops@web-02 ~]$ sudo restorecon -Rv /srv/sysops.example
+Relabeled /srv/sysops.example from unconfined_u:object_r:var_t:s0 to unconfined_
+u:object_r:httpd_sys_content_t:s0
+Relabeled /srv/sysops.example/index.html from unconfined_u:object_r:user_home_t:
+s0 to unconfined_u:object_r:httpd_sys_content_t:s0
+[sysops@web-02 ~]$ ls -Z /srv/sysops.example/index.html
+unconfined_u:object_r:httpd_sys_content_t:s0 /srv/sysops.example/index.html
+[sysops@web-02 ~]$ curl -s -H 'Host: sysops.example' localhost
+<h1>sysops.example on web-02</h1>
+[sysops@web-02 ~]$ sudo semanage fcontext -l -C
+SELinux fcontext                                   type               Context
+
+/srv/sysops.example(/.*)?                          all files          system_u:o
+bject_r:httpd_sys_content_t:s0
+[sysops@web-02 ~]$

@@ -18,6 +18,7 @@ A step is a list of actions (spine/<course>/<NN>/step.json "session"):
   {"cmd": "…", "wait": re}    the same, waiting for a regex instead of the prompt
   {"keys": "…"}               raw keystrokes (no Enter), then settle
   {"secret": "…"}             a password: typed + Enter, never echoed, so never in the transcript
+  "timeout": seconds          on cmd/secret: how long to wait (default 900)
   {"grab": "name"}            save the 80 × 43 screen as tty/<name>.json
   {"hidden": [actions]}       run, but start the transcript AFTER them (e.g. a login)
 """
@@ -194,19 +195,21 @@ class Console:
                 a = {'cmd': a}
             if 'cmd' in a:
                 self.type(a['cmd'] + '\r')
+                t = a.get('timeout', 900)  # a slow step (a kernel's initramfs, emulated) says so in step.json
                 if 'wait' in a:
-                    self.wait_for(re.compile(a['wait']))
+                    self.wait_for(re.compile(a['wait']), t)
                 else:
-                    self.wait_prompt()
+                    self.wait_prompt(t)
             elif 'keys' in a:
                 self.type(a['keys'].encode().decode('unicode_escape'))
                 self.settle(a.get('quiet', 1.5))
             elif 'secret' in a:
                 self.type(a['secret'] + '\r')
+                t = a.get('timeout', 900)
                 if 'wait' in a:
-                    self.wait_for(re.compile(a['wait']))
+                    self.wait_for(re.compile(a['wait']), t)
                 else:
-                    self.wait_prompt()
+                    self.wait_prompt(t)
             elif 'grab' in a:
                 self.settle(a.get('quiet', 1.5))
                 inv, bold = [], []

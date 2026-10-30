@@ -1,0 +1,22 @@
+{
+ "note": "11.7: the same checks on web-02 as course 10 ended on web-01: the system, the service, the firewall, the guard, the page.",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-02",
+    "clear"
+   ]
+  },
+  "grep PRETTY /etc/os-release",
+  "systemctl is-enabled nginx firewalld",
+  {
+   "cmd": "sudo firewall-cmd --list-services",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "getenforce",
+  "curl -s -H 'Host: sysops.example' localhost"
+ ]
+}

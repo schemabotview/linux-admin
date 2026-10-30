@@ -1,0 +1,23 @@
+{
+ "note": "11.3a: no firewall at all on Rocky's cloud image; firewalld installed \u2014 it pulls a new kernel (the cloud kernel lacks the modules). The slow step (an initramfs, emulated): kept apart so later edits never rerun it.",
+ "volatile": true,
+ "session": [
+  {
+   "cmd": "curl -sS -m 10 -o /dev/null -w '%{http_code}\\n' http://web-02/",
+   "wait": "sysops@ops:~\\$ $"
+  },
+  {
+   "cmd": "ssh web-02",
+   "wait": "\\]\\$ $"
+  },
+  "rpm -q firewalld",
+  {
+   "cmd": "sudo dnf install -y firewalld",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops",
+   "timeout": 5400
+  }
+ ]
+}

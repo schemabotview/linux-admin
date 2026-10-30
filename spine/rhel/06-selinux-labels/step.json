@@ -1,0 +1,23 @@
+{
+ "note": "11.5: SELinux: enforcing; nginx's domain; the file's label vs what nginx may read; the denial in the audit log.",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-02",
+    "clear"
+   ]
+  },
+  "getenforce",
+  "ps -eZ | grep nginx | head -n 2",
+  "ls -Z /srv/sysops.example/index.html",
+  "ls -dZ /srv/sysops.example /usr/share/nginx/html",
+  {
+   "cmd": "sudo ausearch -m AVC -c nginx --format text | tail -n 2",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  }
+ ]
+}

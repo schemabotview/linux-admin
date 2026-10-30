@@ -1,0 +1,25 @@
+{
+ "note": "11.2: dnf: the repositories, nginx's version, the install, which (unlike Debian) leaves it disabled.",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-02",
+    "clear"
+   ]
+  },
+  "dnf repolist",
+  "dnf info nginx 2> /dev/null | head -n 6",
+  {
+   "cmd": "sudo dnf install -y nginx",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "rpm -ql nginx | head -n 4",
+  "systemctl is-enabled nginx",
+  "sudo systemctl enable --now nginx",
+  "curl -sI localhost | head -n 2"
+ ]
+}

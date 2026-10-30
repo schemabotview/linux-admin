@@ -1,0 +1,23 @@
+{
+ "note": "11.6: a rule for the path (semanage fcontext), labels applied (restorecon), 200; why mv kept the wrong label.",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-02",
+    "clear"
+   ]
+  },
+  {
+   "cmd": "sudo dnf install -y -q policycoreutils-python-utils > /dev/null",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "sudo semanage fcontext -a -t httpd_sys_content_t '/srv/sysops.example(/.*)?'",
+  "sudo restorecon -Rv /srv/sysops.example",
+  "ls -Z /srv/sysops.example/index.html",
+  "curl -s -H 'Host: sysops.example' localhost",
+  "sudo semanage fcontext -l -C"
+ ]
+}

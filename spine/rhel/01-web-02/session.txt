@@ -1,0 +1,18 @@
+sysops@ops:~$ ssh web-02
+Web console: https://web-02:9090/ or https://10.0.2.15:9090/
+
+[sysops@web-02 ~]$ cat /etc/os-release | head -4
+NAME="Rocky Linux"
+VERSION="10.2 (Red Quartz)"
+RELEASE_TYPE="stable"
+ID="rocky"
+[sysops@web-02 ~]$ uname -r
+6.12.0-211.16.1.el10_2.0.1.x86_64
+[sysops@web-02 ~]$ id
+uid=1000(sysops) gid=1000(sysops) groups=1000(sysops),10(wheel) context=unconfin
+ed_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+[sysops@web-02 ~]$ rpm -q nginx
+package nginx is not installed
+[sysops@web-02 ~]$ ls /etc/nginx
+ls: cannot access '/etc/nginx': No such file or directory
+[sysops@web-02 ~]$

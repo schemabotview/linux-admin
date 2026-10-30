@@ -1,6 +1,6 @@
 # Learn Linux administration by running a web server — plan
 
-**Status: v3 plan (2026-10-30): x86_64, one VM at a time, one vim section.** Courses 1–10 authored (spine captured, scenes, narration, checks); narration audio not generated yet.
+**Status: v3 plan (2026-10-30): x86_64, one VM at a time, one vim section.** All 11 courses (67 sections) authored: spine captured on real VMs, scenes, narration, checks; narration audio not generated yet. Awaiting review.
 
 ## The idea
 
@@ -284,9 +284,9 @@ access log is the one the rest of the course keeps reading.
 | 1 | `web-02`: the same site on Rocky | Debian ↔ Rocky: paths and tools |
 | 2 | `dnf` | apt ↔ dnf side by side; the install |
 | 3 | firewalld | zones → services → the nftables it generates |
-| 4 | ⑂ The 403 | the symptoms; `rwx` says allowed |
+| 4 | The 403 | set up the Debian way (written in `~`, moved in): 403; `rwx` says allowed |
 | 5 | SELinux: labels | two checks, both must pass |
-| 6 | `restorecon` and `semanage fcontext` (replays the 403 and the fix) | the label before/after; why `mv` kept the wrong label |
+| 6 | `restorecon` and `semanage fcontext` | the label before/after; why `mv` kept the wrong label |
 | 7 | One site, two families | the map, every stage lit; the same checks on Debian (course 10's end) and on Rocky |
 
 The final narration closes the film with what the team built. It does not claim the viewer is now

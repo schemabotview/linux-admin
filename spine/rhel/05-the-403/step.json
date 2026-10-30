@@ -1,0 +1,29 @@
+{
+ "note": "11.4: the team's site, set up the Debian way (content written in ~, moved in): 403; rwx says allowed; nginx says permission denied.",
+ "upload": {
+  "lab/files/sysops.example.conf": "/tmp/sysops.example.conf"
+ },
+ "session": [
+  {
+   "hidden": [
+    "ssh web-02",
+    "clear"
+   ]
+  },
+  {
+   "cmd": "sudo mkdir /srv/sysops.example",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "echo '<h1>sysops.example on web-02</h1>' > index.html",
+  "sudo mv index.html /srv/sysops.example/",
+  "sudo cp /tmp/sysops.example.conf /etc/nginx/conf.d/",
+  "sudo nginx -t",
+  "sudo systemctl reload nginx",
+  "curl -s -o /dev/null -w '%{http_code}\\n' -H 'Host: sysops.example' localhost",
+  "namei -l /srv/sysops.example/index.html",
+  "sudo tail -n 1 /var/log/nginx/error.log"
+ ]
+}

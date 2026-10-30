@@ -1,0 +1,14 @@
+{
+ "note": "11.1: web-02, Rocky Linux 10.2: the other family, the same kernel line; the prompt, wheel, no nginx yet.",
+ "session": [
+  {
+   "cmd": "ssh web-02",
+   "wait": "\\]\\$ $"
+  },
+  "cat /etc/os-release | head -4",
+  "uname -r",
+  "id",
+  "rpm -q nginx",
+  "ls /etc/nginx"
+ ]
+}

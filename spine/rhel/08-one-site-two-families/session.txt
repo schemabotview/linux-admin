@@ -1,0 +1,13 @@
+[sysops@web-02 ~]$ grep PRETTY /etc/os-release
+PRETTY_NAME="Rocky Linux 10.2 (Red Quartz)"
+[sysops@web-02 ~]$ systemctl is-enabled nginx firewalld
+enabled
+enabled
+[sysops@web-02 ~]$ sudo firewall-cmd --list-services
+[sudo] password for sysops:
+cockpit dhcpv6-client http https ssh
+[sysops@web-02 ~]$ getenforce
+Enforcing
+[sysops@web-02 ~]$ curl -s -H 'Host: sysops.example' localhost
+<h1>sysops.example on web-02</h1>
+[sysops@web-02 ~]$

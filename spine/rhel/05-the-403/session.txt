@@ -1,0 +1,23 @@
+[sysops@web-02 ~]$ sudo mkdir /srv/sysops.example
+[sudo] password for sysops:
+[sysops@web-02 ~]$ echo '<h1>sysops.example on web-02</h1>' > index.html
+[sysops@web-02 ~]$ sudo mv index.html /srv/sysops.example/
+[sysops@web-02 ~]$ sudo cp /tmp/sysops.example.conf /etc/nginx/conf.d/
+[sysops@web-02 ~]$ sudo nginx -t
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+[sysops@web-02 ~]$ sudo systemctl reload nginx
+[sysops@web-02 ~]$ curl -s -o /dev/null -w '%{http_code}\n' -H 'Host: sysops.exa
+mple' localhost
+403
+[sysops@web-02 ~]$ namei -l /srv/sysops.example/index.html
+f: /srv/sysops.example/index.html
+drwxr-xr-x root   root   /
+drwxr-xr-x root   root   srv
+drwxr-xr-x root   root   sysops.example
+-rw-r--r-- sysops sysops index.html
+[sysops@web-02 ~]$ sudo tail -n 1 /var/log/nginx/error.log
+2026/11/02 09:43:41 [error] 26190#26190: *5 open() "/srv/sysops.example/index.ht
+ml" failed (13: Permission denied), client: ::1, server: sysops.example, request
+: "GET / HTTP/1.1", host: "sysops.example"
+[sysops@web-02 ~]$

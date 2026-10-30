@@ -23,7 +23,8 @@ export function read(session: string, pattern: RegExp): string {
  *  rows that continue it before comparing. `nth` picks among repeated runs (1 first, -1 last). */
 export function outputOf(session: string, command: string, nth = 1): string {
   const rows = session.split('\n')
-  const prompt = /^\S+@\S+:.*?[$#]( |$)/
+  // Debian's user@host:dir$ and Red Hat's [user@host dir]$ (graphl-flow's console knows both)
+  const prompt = /^(?:\S+@\S+:.*?[$#]|\[\S+@\S+ [^\]]*\][$#])( |$)/
   const found: string[] = []
   for (let i = 0; i < rows.length; i++) {
     if (!prompt.test(rows[i])) continue

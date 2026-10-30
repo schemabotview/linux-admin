@@ -1,0 +1,15 @@
+[sysops@web-02 ~]$ getenforce
+Enforcing
+[sysops@web-02 ~]$ ps -eZ | grep nginx | head -n 2
+system_u:system_r:httpd_t:s0       5004 ?        00:00:00 nginx
+system_u:system_r:httpd_t:s0      26189 ?        00:00:00 nginx
+[sysops@web-02 ~]$ ls -Z /srv/sysops.example/index.html
+unconfined_u:object_r:user_home_t:s0 /srv/sysops.example/index.html
+[sysops@web-02 ~]$ ls -dZ /srv/sysops.example /usr/share/nginx/html
+          unconfined_u:object_r:var_t:s0 /srv/sysops.example
+system_u:object_r:httpd_sys_content_t:s0 /usr/share/nginx/html
+[sysops@web-02 ~]$ sudo ausearch -m AVC -c nginx --format text | tail -n 2
+[sudo] password for sysops:
+At 09:43:41 11/02/2026 system, acting as nginx, unsuccessfully accessed-mac-poli
+cy-controlled-object using /usr/sbin/nginx
+[sysops@web-02 ~]$

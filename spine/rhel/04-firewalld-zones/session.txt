@@ -1,0 +1,35 @@
+[sysops@web-02 ~]$ sudo systemctl enable --now firewalld
+[sudo] password for sysops:
+[sysops@web-02 ~]$ sudo firewall-cmd --get-active-zones
+Waiting on dbus connection...
+public (default)
+  interfaces: enp0s2
+[sysops@web-02 ~]$ sudo firewall-cmd --list-services
+cockpit dhcpv6-client ssh
+[sysops@web-02 ~]$ exit
+logout
+Connection to web-02 closed.
+sysops@ops:~$ curl -sS -m 10 -o /dev/null -w '%{http_code}\n' http://web-02/
+curl: (28) Operation timed out after 10002 milliseconds with 0 bytes received
+000
+sysops@ops:~$ ssh web-02
+Web console: https://web-02:9090/ or https://10.0.2.15:9090/
+
+Last login: Mon Nov  2 09:41:13 2026 from 10.0.2.2
+[sysops@web-02 ~]$ sudo firewall-cmd --permanent --add-service=http --add-servic
+e=https
+[sudo] password for sysops:
+success
+[sysops@web-02 ~]$ sudo firewall-cmd --reload
+success
+[sysops@web-02 ~]$ sudo firewall-cmd --list-services
+cockpit dhcpv6-client http https ssh
+[sysops@web-02 ~]$ sudo nft list ruleset | grep -E 'dport (80|443)'
+                tcp dport 80 accept
+                tcp dport 443 accept
+[sysops@web-02 ~]$ exit
+logout
+Connection to web-02 closed.
+sysops@ops:~$ curl -sS -m 10 -o /dev/null -w '%{http_code}\n' http://web-02/
+200
+sysops@ops:~$

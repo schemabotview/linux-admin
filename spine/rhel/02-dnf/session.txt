@@ -1,0 +1,81 @@
+[sysops@web-02 ~]$ dnf repolist
+repo id                         repo name
+appstream                       Rocky Linux 10 - AppStream
+baseos                          Rocky Linux 10 - BaseOS
+extras                          Rocky Linux 10 - Extras
+[sysops@web-02 ~]$ dnf info nginx 2> /dev/null | head -n 6
+Rocky Linux 10 - BaseOS                          19 MB/s |  42 MB     00:02
+Rocky Linux 10 - AppStream                       12 MB/s | 2.9 MB     00:00
+Rocky Linux 10 - Extras                         201 kB/s | 6.1 kB     00:00
+Last metadata expiration check: 0:00:01 ago on Mon 02 Nov 2026 09:15:00 AM UTC.
+Available Packages
+Name         : nginx
+[sysops@web-02 ~]$ sudo dnf install -y nginx
+[sudo] password for sysops:
+Rocky Linux 10 - BaseOS                          18 MB/s |  42 MB     00:02
+Rocky Linux 10 - AppStream                       13 MB/s | 2.9 MB     00:00
+Rocky Linux 10 - Extras                         160 kB/s | 6.1 kB     00:00
+Dependencies resolved.
+================================================================================
+ Package               Arch       Version                   Repository     Size
+================================================================================
+Installing:
+ nginx                 x86_64     2:1.26.3-6.el10_2.7       appstream      32 k
+Installing dependencies:
+ nginx-core            x86_64     2:1.26.3-6.el10_2.7       appstream     659 k
+ nginx-filesystem      noarch     2:1.26.3-6.el10_2.7       appstream      11 k
+ rocky-logos-httpd     noarch     100.5-3.el10              appstream      24 k
+
+Transaction Summary
+================================================================================
+Install  4 Packages
+
+Total download size: 727 k
+Installed size: 1.9 M
+Downloading Packages:
+(1/4): nginx-1.26.3-6.el10_2.7.x86_64.rpm       747 kB/s |  32 kB     00:00
+(2/4): nginx-filesystem-1.26.3-6.el10_2.7.noarc 220 kB/s |  11 kB     00:00
+(3/4): nginx-core-1.26.3-6.el10_2.7.x86_64.rpm  5.2 MB/s | 659 kB     00:00
+(4/4): rocky-logos-httpd-100.5-3.el10.noarch.rp 302 kB/s |  24 kB     00:00
+--------------------------------------------------------------------------------
+Total                                           3.8 MB/s | 727 kB     00:00
+Rocky Linux 10 - AppStream                      252 kB/s | 1.6 kB     00:00
+Importing GPG key 0x6FEDFC85:
+ Userid     : "Release Engineering (Rocky Linux 10) <releng@rockylinux.org>"
+ Fingerprint: FC22 6859 C086 0BF0 DDB9 5B08 5B10 6C73 6FED FC85
+ From       : /etc/pki/rpm-gpg/RPM-GPG-KEY-Rocky-10
+Key imported successfully
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                        1/1
+  Running scriptlet: nginx-filesystem-2:1.26.3-6.el10_2.7.noarch            1/4
+  Installing       : nginx-filesystem-2:1.26.3-6.el10_2.7.noarch            1/4
+  Installing       : nginx-core-2:1.26.3-6.el10_2.7.x86_64                  2/4
+  Installing       : rocky-logos-httpd-100.5-3.el10.noarch                  3/4
+  Installing       : nginx-2:1.26.3-6.el10_2.7.x86_64                       4/4
+  Running scriptlet: nginx-2:1.26.3-6.el10_2.7.x86_64                       4/4
+
+Installed:
+  nginx-2:1.26.3-6.el10_2.7.x86_64
+  nginx-core-2:1.26.3-6.el10_2.7.x86_64
+  nginx-filesystem-2:1.26.3-6.el10_2.7.noarch
+  rocky-logos-httpd-100.5-3.el10.noarch
+
+Complete!
+[sysops@web-02 ~]$ rpm -ql nginx | head -n 4
+/usr/bin/nginx-upgrade
+/usr/lib/systemd/system/nginx.service
+/usr/lib/systemd/system/nginx@.service
+/usr/libexec/nginx-ssl-pass-dialog
+[sysops@web-02 ~]$ systemctl is-enabled nginx
+disabled
+[sysops@web-02 ~]$ sudo systemctl enable --now nginx
+Created symlink '/etc/systemd/system/multi-user.target.wants/nginx.service' → '/
+usr/lib/systemd/system/nginx.service'.
+[sysops@web-02 ~]$ curl -sI localhost | head -n 2
+HTTP/1.1 200 OK
+Server: nginx/1.26.3
+[sysops@web-02 ~]$

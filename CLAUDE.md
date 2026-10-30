@@ -10,8 +10,10 @@ Engine `@graphlearning/graphl-flow` ^0.8.0, shell `@graphlearning/shell` ^1.0.4.
 
 ## Status
 
-Authored 2026-10-30 (spine captured on the real VM, scenes, narration, checks green, every frame
-looked at; no narration audio yet): 1 `intro` 2, 2 `shell` 7, 3 `packages` 4, 4 `text` 7, 5 `users` 6, 6 `processes` 7, 7 `services` 7, 8 `network` 8, 9 `storage` 6, 10 `scripting` 6.
+ALL ELEVEN COURSES AUTHORED, 67 sections (2026-10-30/31): spine captured on real VMs, scenes,
+narration, checks green, every frame looked at. No narration audio yet; awaiting the owner's review.
+1 `intro` 2, 2 `shell` 7, 3 `packages` 4, 4 `text` 7, 5 `users` 6, 6 `processes` 7, 7 `services` 7,
+8 `network` 8, 9 `storage` 6, 10 `scripting` 6, 11 `rhel` 7 (on web-02, Rocky 10.2).
 `packages` moved before `text` so nginx's access log exists for the text tools.
 
 ## Every output is real

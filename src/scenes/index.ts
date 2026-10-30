@@ -9,10 +9,11 @@ import { servicesScenes } from './services'
 import { networkScenes } from './network'
 import { storageScenes } from './storage'
 import { scriptingScenes } from './scripting'
+import { rhelScenes } from './rhel'
 
 // Scene registry, grouped by course (one folder each, mirroring src/content). Ids are globally
 // unique: a duplicate THROWS rather than letting one course's scene shadow another's.
-const GROUPS: Record<string, SceneModel>[] = [introScenes, shellScenes, packagesScenes, textScenes, usersScenes, processesScenes, servicesScenes, networkScenes, storageScenes, scriptingScenes]
+const GROUPS: Record<string, SceneModel>[] = [introScenes, shellScenes, packagesScenes, textScenes, usersScenes, processesScenes, servicesScenes, networkScenes, storageScenes, scriptingScenes, rhelScenes]
 
 export const SCENES: Record<string, SceneModel> = {}
 for (const group of GROUPS)
