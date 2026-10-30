@@ -1,0 +1,47 @@
+#cloud-config
+# web-01's base: everything a replay must find the same every time. See lab/README.md.
+hostname: web-01
+fqdn: web-01
+manage_etc_hosts: true
+timezone: Etc/UTC
+locale: C.UTF-8
+ssh_pwauth: true
+users:
+  - name: sysops
+    gecos: Sysops team
+    shell: /bin/bash
+    lock_passwd: false
+    # lab-only password "sysops", for sudo and course 8.5
+    passwd: "$6$sysopslab$YXsngArpB5C8Ouk1Wz/KktkDIQhWoUwPapMxtM2Iian/s5CdZkDFjgEUZSDTv53Ovtlgh1591EIRUboWJN86z."
+    sudo: "ALL=(ALL) ALL"
+    groups: [adm]
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAFKMejhiQS5quNwP4yPeGY+Np47AEVtPlqdEkpgb3Mq sysops@ops
+ssh_deletekeys: true
+ssh_genkeytypes: []
+ssh_keys:
+  ed25519_private: |
+    -----BEGIN OPENSSH PRIVATE KEY-----
+    b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+    QyNTUxOQAAACCaXVDNriU1X+2O63DAO23TOwaTcBNruWC/fXJt4Y5ofgAAAJCWCm77lgpu
+    +wAAAAtzc2gtZWQyNTUxOQAAACCaXVDNriU1X+2O63DAO23TOwaTcBNruWC/fXJt4Y5ofg
+    AAAEB/TzWWujggTGzN0hpPNjXyCGcDIT8EonlJce54TrZmpppdUM2uJTVf7Y7rcMA7bdM7
+    BpNwE2u5YL99cm3hjmh+AAAABndlYi0wMQECAwQFBgc=
+    -----END OPENSSH PRIVATE KEY-----
+  ed25519_public: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJpdUM2uJTVf7Y7rcMA7bdM7BpNwE2u5YL99cm3hjmh+ web-01
+apt:
+  preserve_sources_list: false
+  sources_list: |
+    deb http://snapshot.debian.org/archive/debian/20261026T000000Z trixie main
+    deb http://snapshot.debian.org/archive/debian/20261026T000000Z trixie-updates main
+    deb http://snapshot.debian.org/archive/debian-security/20261026T000000Z trixie-security main
+  conf: |
+    Acquire::Check-Valid-Until "false";
+package_update: false
+package_upgrade: false
+runcmd:
+  - [systemctl, disable, --now, systemd-timesyncd.service]
+  # nothing may run apt behind a replay's back: course 6 runs it, by hand
+  - [systemctl, disable, --now, apt-daily.timer, apt-daily-upgrade.timer, unattended-upgrades.service]
+  - [rm, -f, /etc/apt/sources.list.d/debian.sources]
+  - [touch, /etc/cloud/cloud-init.disabled]

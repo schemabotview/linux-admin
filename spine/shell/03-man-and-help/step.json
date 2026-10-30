@@ -1,0 +1,23 @@
+{
+ "note": "2.3: --help for a summary, man for the manual (a tty grab).",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "ls --help | head -12",
+  {
+   "keys": "man ls\\r",
+   "quiet": 3
+  },
+  {
+   "grab": "man-ls"
+  },
+  {
+   "keys": "q"
+  },
+  "man -f ls passwd"
+ ]
+}

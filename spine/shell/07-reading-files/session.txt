@@ -1,0 +1,13 @@
+sysops@web-01:~$ cat /etc/hostname
+web-01
+sysops@web-01:~$ head -n 3 /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sysops@web-01:~$ tail -n 2 /etc/passwd
+polkitd:x:988:988:User for polkitd:/:/usr/sbin/nologin
+sysops:x:1000:1000:Sysops team:/home/sysops:/bin/bash
+sysops@web-01:~$ wc -l /etc/passwd
+28 /etc/passwd
+sysops@web-01:~$ less /var/log/README
+sysops@web-01:~$

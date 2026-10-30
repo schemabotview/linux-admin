@@ -1,0 +1,29 @@
+sysops@ops:~$ ssh web-01
+Linux web-01 6.12.113+deb13-cloud-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.113-1
+ (2026-10-15) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Mon Nov  2 09:04:03 2026 from 10.0.2.2
+sysops@web-01:~$ whoami
+sysops
+sysops@web-01:~$ hostname
+web-01
+sysops@web-01:~$ pwd
+/home/sysops
+sysops@web-01:~$ sudo -i
+[sudo] password for sysops:
+root@web-01:~# whoami
+root
+root@web-01:~# pwd
+/root
+root@web-01:~# exit
+logout
+sysops@web-01:~$ exit
+logout
+Connection to web-01 closed.
+sysops@ops:~$

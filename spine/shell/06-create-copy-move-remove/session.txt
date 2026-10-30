@@ -1,0 +1,23 @@
+sysops@web-01:~$ mkdir site
+sysops@web-01:~$ touch site/index.html
+sysops@web-01:~$ cp site/index.html site/copy.html
+sysops@web-01:~$ mv site/copy.html site/about.html
+sysops@web-01:~$ mkdir site/css
+sysops@web-01:~$ cp /etc/hostname site/notes.txt
+sysops@web-01:~$ ls -F site
+about.html  css/  index.html  notes.txt
+sysops@web-01:~$ mv -i site/about.html site/notes.txt
+mv: overwrite 'site/notes.txt'? n
+sysops@web-01:~$ cat site/notes.txt
+web-01
+sysops@web-01:~$ rm site/about.html
+sysops@web-01:~$ rm site
+rm: cannot remove 'site': Is a directory
+sysops@web-01:~$ rm -ri site
+rm: descend into directory 'site'? y
+rm: remove directory 'site/css'? y
+rm: remove regular file 'site/notes.txt'? y
+rm: remove regular empty file 'site/index.html'? y
+rm: remove directory 'site'? y
+sysops@web-01:~$ ls
+sysops@web-01:~$

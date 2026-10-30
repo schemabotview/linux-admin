@@ -1,0 +1,21 @@
+{
+ "note": "2.5: absolute and relative paths, ~, .., cd -.",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "pwd",
+  "cd /etc/ssh",
+  "pwd",
+  "cd ../default",
+  "pwd",
+  "cd ~",
+  "pwd",
+  "ls ../..",
+  "cd /var/log",
+  "cd -"
+ ]
+}

@@ -1,0 +1,49 @@
+{
+ "note": "2.6: a site folder made, copied, moved, removed; mv replaces silently unless -i; rm has no undo.",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "mkdir site",
+  "touch site/index.html",
+  "cp site/index.html site/copy.html",
+  "mv site/copy.html site/about.html",
+  "mkdir site/css",
+  "cp /etc/hostname site/notes.txt",
+  "ls -F site",
+  {
+   "cmd": "mv -i site/about.html site/notes.txt",
+   "wait": "\\? $"
+  },
+  "n",
+  "cat site/notes.txt",
+  "rm site/about.html",
+  "rm site",
+  {
+   "cmd": "rm -ri site",
+   "wait": "\\? $"
+  },
+  {
+   "cmd": "y",
+   "wait": "\\? $"
+  },
+  {
+   "cmd": "y",
+   "wait": "\\? $"
+  },
+  {
+   "cmd": "y",
+   "wait": "\\? $"
+  },
+  {
+   "cmd": "y",
+   "wait": "\\? $"
+  },
+  "y",
+  "ls"
+ ]
+}

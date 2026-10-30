@@ -1,6 +1,6 @@
 # Learn Linux administration by running a web server — plan
 
-**Status: v3 plan (2026-10-30): x86_64, one VM at a time, one vim section.** Authoring of courses 1–2 has begun.
+**Status: v3 plan (2026-10-30): x86_64, one VM at a time, one vim section.** Courses 1–2 authored (spine captured, scenes, narration, checks); narration audio not generated yet.
 
 ## The idea
 
@@ -177,8 +177,8 @@ Branch sections (run, then discarded) are marked ⑂.
 | 3 | `man` and `--help` (tty) | a man page's sections |
 | 4 | ◆ full scene: the filesystem tree | `/etc /var /usr /home /srv /proc`, the real `ls /` |
 | 5 | Paths: absolute, relative, `~`, `..` | the tree with cwd marked, two routes to one file |
-| 6 | Create, copy, move, remove | the tree before/after; `rm -r` has no undo |
-| 7 | Reading files: `cat`, `less`, `head`, `tail -f` | a file as lines, the window each command shows |
+| 6 | Create, copy, move, remove | `site/` after each command; `mv`/`cp` replace silently unless `-i`; `rm -r` has no undo |
+| 7 | Reading files: `cat`, `less`, `head`, `tail` | which tool for which file; one `/etc/passwd` line read field by field (`tail -f` waits for course 7, the first log that grows) |
 
 **3. `text` · Text is the interface · 7**
 

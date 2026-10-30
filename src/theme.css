@@ -1,0 +1,5 @@
+/* This repo's whole design surface — the token @graphlearning/shell leaves to the repo. Imported
+   AFTER the shell's stylesheet in main.tsx, so it wins the cascade. Tux amber as --brand. */
+:root {
+  --brand: #e3a72f;
+}

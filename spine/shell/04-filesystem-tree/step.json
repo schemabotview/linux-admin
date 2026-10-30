@@ -1,0 +1,13 @@
+{
+ "note": "2.4 (full scene): the tree from /.",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "ls -F /",
+  "ls /home /srv"
+ ]
+}

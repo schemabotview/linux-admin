@@ -1,0 +1,14 @@
+{
+ "note": "1.1: what os-release and uname name, as layers.",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "cat /etc/os-release | head -4",
+  "uname -r",
+  "uname -m"
+ ]
+}

@@ -1,0 +1,19 @@
+{
+ "note": "2.2: a command, its options, its arguments; an option it does not know.",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "ls",
+  "ls /etc/ssh",
+  "ls -l /etc/hostname",
+  "ls -l -h /etc/ssh/sshd_config",
+  "ls -lh /etc/hostname /etc/hosts",
+  "ls -a",
+  "ls -z"
+ ]
+}

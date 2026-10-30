@@ -1,0 +1,21 @@
+{
+ "note": "2.1: from the ops workstation into web-01; the prompt read; $ vs # under sudo -i.",
+ "volatile": true,
+ "session": [
+  "ssh web-01",
+  "whoami",
+  "hostname",
+  "pwd",
+  {
+   "cmd": "sudo -i",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "whoami",
+  "pwd",
+  "exit",
+  "exit"
+ ]
+}

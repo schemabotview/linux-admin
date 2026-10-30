@@ -1,0 +1,18 @@
+sysops@web-01:~$ pwd
+/home/sysops
+sysops@web-01:~$ cd /etc/ssh
+sysops@web-01:/etc/ssh$ pwd
+/etc/ssh
+sysops@web-01:/etc/ssh$ cd ../default
+sysops@web-01:/etc/default$ pwd
+/etc/default
+sysops@web-01:/etc/default$ cd ~
+sysops@web-01:~$ pwd
+/home/sysops
+sysops@web-01:~$ ls ../..
+bin   dev  home  lib64       media  opt   root  sbin  sys  usr
+boot  etc  lib   lost+found  mnt    proc  run   srv   tmp  var
+sysops@web-01:~$ cd /var/log
+sysops@web-01:/var/log$ cd -
+/home/sysops
+sysops@web-01:~$

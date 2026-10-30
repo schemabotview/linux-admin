@@ -1,0 +1,9 @@
+sysops@web-01:~$ ls -F /
+bin@   dev/  home/  lib64@       media/  opt/   root/  sbin@  sys/  usr/
+boot/  etc/  lib@   lost+found/  mnt/    proc/  run/   srv/   tmp/  var/
+sysops@web-01:~$ ls /home /srv
+/home:
+sysops
+
+/srv:
+sysops@web-01:~$

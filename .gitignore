@@ -1,0 +1,8 @@
+*.local
+.DS_Store
+.claude
+__pycache__
+dist
+node_modules
+out
+segments
