@@ -59,6 +59,9 @@ class VM:
         if not aptcache.running():  # the VM's apt proxy (lab/aptcache.py); it outlives the VM, harmlessly
             subprocess.Popen([sys.executable, str(Path(__file__).parent / 'aptcache.py')], start_new_session=True,
                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        import acme
+        if not acme.running():  # the lab's ACME server (lab/acme.py), for course 8's certificate
+            acme.start()
         kvm = os.path.exists('/dev/kvm')
         self.qmp_path.unlink(missing_ok=True)
         cmd = [
@@ -67,7 +70,7 @@ class VM:
             '-smp', '2', '-m', '2048',
             '-rtc', f'base={CLOCK},clock=vm',
             '-drive', f'file={self.disk},if=virtio,format=qcow2,discard=unmap',
-            '-netdev', f'user,id=n0,hostname={self.host},hostfwd=tcp:{SSH_ADDR}:22-:22',
+            '-netdev', f'user,id=n0,hostname={self.host},hostfwd=tcp:{SSH_ADDR}:22-:22,hostfwd=tcp:{SSH_ADDR}:80-:80,hostfwd=tcp:{SSH_ADDR}:443-:443',
             '-device', f'virtio-net-pci,netdev=n0,mac={self.spec["mac"]}',
             '-qmp', f'unix:{self.qmp_path},server=on,wait=off',
             '-display', 'none', '-serial', f'file:{LAB / (self.host + ".console.log")}',

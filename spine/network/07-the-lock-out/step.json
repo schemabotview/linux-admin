@@ -1,0 +1,31 @@
+{
+ "note": "8.6, branch (discarded): a drop rule for port 22 ahead of the accept; the session freezes; ~. and a new login times out.",
+ "branch": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  {
+   "cmd": "sudo nft insert rule inet filter input tcp dport 22 drop",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  {
+   "keys": "uptime\\r",
+   "quiet": 6
+  },
+  {
+   "keys": "\\r~.",
+   "quiet": 4
+  },
+  {
+   "cmd": "ssh -o ConnectTimeout=10 web-01",
+   "wait": "sysops@ops:~\\$ $"
+  }
+ ]
+}

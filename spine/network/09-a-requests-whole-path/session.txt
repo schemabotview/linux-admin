@@ -1,0 +1,28 @@
+sysops@ops:~$ getent hosts sysops.example
+127.0.0.11      sysops.example
+sysops@ops:~$ curl -sv https://sysops.example/ -o /dev/null 2>&1 | grep -E '^\*
+(Connected|SSL connection|Server certificate)|^\*  +(subject|issuer|expire)|^> (
+GET|Host)|^< HTTP'
+* Connected to sysops.example (127.0.0.11) port 443
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384 / X25519 / id-ecPublicKe
+y
+* Server certificate:
+*  subject: CN=sysops.example
+*  expire date: Oct 30 19:10:03 2031 GMT
+*  subjectAltName: host "sysops.example" matched cert's "sysops.example"
+*  issuer: CN=Pebble Intermediate CA 3cdb95
+> GET / HTTP/1.1
+> Host: sysops.example
+< HTTP/1.1 200 OK
+sysops@ops:~$ ssh -t web-01 "sudo nft list chain inet filter input | grep 'the s
+ite'"
+[sudo] password for sysops:
+                tcp dport { 80, 443 } counter packets 4 bytes 176 accept comment
+ "the site"
+Connection to web-01 closed.
+sysops@ops:~$ ssh web-01 tail -n 1 /var/log/nginx/sysops.example.access.log
+10.0.2.2 - - [02/Nov/2026:09:28:08 +0000] "GET / HTTP/1.1" 200 24 "-" "curl/8.5.
+0"
+sysops@ops:~$ ssh web-01 cat /srv/sysops.example/index.html
+<h1>sysops.example</h1>
+sysops@ops:~$

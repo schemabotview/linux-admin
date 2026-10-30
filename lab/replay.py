@@ -14,7 +14,8 @@ and the next step builds on its parent.
 Staleness is a hash chain: a step's key is sha256(parent key + its step.json), recorded in
 `spine/chain.lock` when its transcript is written. Edit a step and it and everything after it no
 longer match. The lock is committed, so `--check` works anywhere; the snapshots live only in the lab
-host's qcow2 (`$LAB`), so a missing snapshot is also stale there.
+host's qcow2 (`$LAB`). Only base and each course's last step are KEPT (keep_tags): a replay whose
+parent was pruned rebuilds forward from the nearest kept ancestor.
 
 `volatile` (step.json) masks digits and 0x… addresses when a new transcript is compared with the old
 one: a PID or uptime change is not a change.
@@ -54,6 +55,17 @@ def steps() -> list[dict]:
     return out
 
 
+def keep_tags(chain: list[dict]) -> set[str]:
+    """The snapshots worth keeping: base and each course's last (non-branch) step. A snapshot holds the
+    VM's RAM (~0.5 GB): keeping every step's filled a 39 GB disk at course 8. Replaying an earlier
+    step rebuilds forward from the nearest kept one."""
+    last = {}
+    for s in chain:
+        if not s['spec'].get('branch'):
+            last[s['tag'].rsplit('-', 1)[0]] = s['tag']
+    return {'base', *last.values()}
+
+
 def mask(text: str) -> str:
     return re.sub(r'0x[0-9a-f]+|\d', '#', text)
 
@@ -86,13 +98,19 @@ def replay(only: str | None) -> int:
         start = next(i for i, s in enumerate(chain) if s['tag'] == f'{course}-{nn[:2]}')
     todo, dirty = [], False
     for i, s in enumerate(chain):
-        stale = lock.get(s['tag']) != s['key'] or (not s['spec'].get('branch') and s['tag'] not in live)
+        stale = lock.get(s['tag']) != s['key']
         if (start is not None and i == start) or stale or (dirty and not s['spec'].get('branch')):
             todo.append(s)
             dirty = dirty or not s['spec'].get('branch')
     if not todo:
         print('nothing stale')
         return 0
+    # The first step's parent may have been pruned (keep_tags): rebuild forward from the nearest
+    # ancestor that is still there, re-running the steps in between (their transcripts should be "same").
+    by_tag = {s['tag']: s for s in chain}
+    while todo[0]['parent'] != 'base' and todo[0]['parent'] not in live:
+        todo.insert(0, by_tag[todo[0]['parent']])
+    keep = keep_tags(chain)
     setup_ops()
     vm.start(loadvm=todo[0]['parent'])
     try:
@@ -117,6 +135,9 @@ def replay(only: str | None) -> int:
                     (s['dir'] / 'tty' / f'{name}.json').write_text(json.dumps(g, indent=1) + '\n')
             if not s['spec'].get('branch'):
                 vm.save(s['tag'])
+                for tag in vm.snapshots_live():  # a snapshot is ~0.5 GB of RAM: keep only what the chain needs
+                    if tag not in keep and tag != s['tag'] and tag != s['parent']:
+                        vm.hmp(f'delvm {tag}')
             lock[s['tag']] = s['key']
             LOCK.write_text(json.dumps(lock, indent=1, sort_keys=True) + '\n')
             print(f'{s["tag"]:<16} {"changed" if changed else "same":<8} {time.time() - t0:5.0f}s'

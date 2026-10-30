@@ -1,0 +1,27 @@
+{
+ "note": "8.6: nftables installed, our ruleset checked, applied, enabled; the counters after traffic.",
+ "volatile": true,
+ "upload": {
+  "lab/files/nftables.conf": "/tmp/nftables.conf"
+ },
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  {
+   "cmd": "sudo apt install -y nftables",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "sudo nft -c -f /tmp/nftables.conf && echo ruleset ok",
+  "sudo cp /tmp/nftables.conf /etc/nftables.conf",
+  "sudo systemctl enable --now nftables",
+  "curl -s -o /dev/null -w '%{http_code}\\n' http://sysops.example/",
+  "sudo nft list chain inet filter input"
+ ]
+}

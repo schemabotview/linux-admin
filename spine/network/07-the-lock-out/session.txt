@@ -1,0 +1,7 @@
+sysops@web-01:~$ sudo nft insert rule inet filter input tcp dport 22 drop
+[sudo] password for sysops:
+sysops@web-01:~$ Connection to web-01 closed.
+sysops@ops:~$ ssh -o ConnectTimeout=10 web-01
+Connection timed out during banner exchange
+Connection to 127.0.0.11 port 22 timed out
+sysops@ops:~$

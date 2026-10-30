@@ -1,6 +1,6 @@
 # Learn Linux administration by running a web server — plan
 
-**Status: v3 plan (2026-10-30): x86_64, one VM at a time, one vim section.** Courses 1–7 authored (spine captured, scenes, narration, checks); narration audio not generated yet.
+**Status: v3 plan (2026-10-30): x86_64, one VM at a time, one vim section.** Courses 1–8 authored (spine captured, scenes, narration, checks); narration audio not generated yet.
 
 ## The idea
 

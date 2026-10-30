@@ -1,0 +1,45 @@
+{
+ "note": "8.5: the key pair, the same fingerprint on both ends; a password login, then passwords off (drop-in, sshd -t, reload); refused.",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "cat ~/.ssh/authorized_keys | cut -c 1-60",
+  "ssh-keygen -lf ~/.ssh/authorized_keys",
+  {
+   "cmd": "exit",
+   "wait": "sysops@ops:~\\$ $"
+  },
+  "ssh-keygen -lf ~/.ssh/id_ed25519.pub",
+  {
+   "cmd": "ssh -o PubkeyAuthentication=no web-01",
+   "wait": "password: $"
+  },
+  {
+   "secret": "sysops",
+   "wait": "sysops@web-01:~\\$ $"
+  },
+  {
+   "cmd": "echo 'PasswordAuthentication no' | sudo tee /etc/ssh/sshd_config.d/10-no-passwords.conf",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "ls /etc/ssh/sshd_config.d",
+  "sudo sshd -t && echo config ok",
+  "sudo systemctl reload ssh",
+  {
+   "cmd": "exit",
+   "wait": "sysops@ops:~\\$ $"
+  },
+  {
+   "cmd": "ssh -o PubkeyAuthentication=no web-01",
+   "wait": "sysops@ops:~\\$ $"
+  }
+ ]
+}

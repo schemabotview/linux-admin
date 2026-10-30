@@ -1,0 +1,14 @@
+{
+ "note": "8.4: a request and its response, header by header; a 404 by its code.",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "curl -v http://sysops.example/",
+  "curl -s -o /dev/null -w '%{http_code}\\n' http://sysops.example/nope"
+ ]
+}

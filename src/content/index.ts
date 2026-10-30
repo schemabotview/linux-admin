@@ -5,6 +5,7 @@ import { text } from './text'
 import { users } from './users'
 import { processes } from './processes'
 import { services } from './services'
+import { network } from './network'
 import type { Course, Section } from './types'
 
 // Course registry, in syllabus order (LINUX-COURSE-PLAN.md). A course is registered only once it is authored.
@@ -16,6 +17,7 @@ export const COURSES: Record<string, Course> = {
   [users.id]: users,
   [processes.id]: processes,
   [services.id]: services,
+  [network.id]: network,
 }
 
 export type { Course, Section }

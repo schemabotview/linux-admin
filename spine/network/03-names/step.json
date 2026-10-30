@@ -1,0 +1,23 @@
+{
+ "note": "8.3: /etc/hosts, the lookup order, and naming the site on the server itself.",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "cat /etc/hosts",
+  "grep ^hosts: /etc/nsswitch.conf",
+  "getent hosts sysops.example; echo \"exit $?\"",
+  {
+   "cmd": "echo '127.0.0.1 sysops.example' | sudo tee -a /etc/hosts",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "getent hosts sysops.example",
+  "resolvectl query sysops.example"
+ ]
+}

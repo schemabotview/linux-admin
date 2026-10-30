@@ -1,0 +1,29 @@
+sysops@web-01:~$ curl -v http://sysops.example/
+* Host sysops.example:80 was resolved.
+* IPv6: (none)
+* IPv4: 127.0.0.1
+*   Trying 127.0.0.1:80...
+* Connected to sysops.example (127.0.0.1) port 80
+* using HTTP/1.x
+> GET / HTTP/1.1
+> Host: sysops.example
+> User-Agent: curl/8.14.1
+> Accept: */*
+>
+* Request completely sent off
+< HTTP/1.1 200 OK
+< Server: nginx
+< Date: Mon, 02 Nov 2026 09:21:22 GMT
+< Content-Type: text/html
+< Content-Length: 24
+< Last-Modified: Mon, 02 Nov 2026 09:18:21 GMT
+< Connection: keep-alive
+< ETag: "6ae8555d-18"
+< Accept-Ranges: bytes
+<
+<h1>sysops.example</h1>
+* Connection #0 to host sysops.example left intact
+sysops@web-01:~$ curl -s -o /dev/null -w '%{http_code}\n' http://sysops.example/
+nope
+404
+sysops@web-01:~$

@@ -1,0 +1,35 @@
+sysops@web-01:~$ cat /etc/hosts
+# Your system has configured 'manage_etc_hosts' as True.
+# As a result, if you wish for changes to this file to persist
+# then you will need to either
+# a.) make changes to the master file in /etc/cloud/templates/hosts.debian.tmpl
+# b.) change or remove the value of 'manage_etc_hosts' in
+#     /etc/cloud/cloud.cfg or cloud-config from user-data
+#
+127.0.1.1 web-01 web-01
+127.0.0.1 localhost
+
+# The following lines are desirable for IPv6 capable hosts
+::1 localhost ip6-localhost ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+
+sysops@web-01:~$ grep ^hosts: /etc/nsswitch.conf
+hosts:          files myhostname resolve [!UNAVAIL=return] dns
+sysops@web-01:~$ getent hosts sysops.example; echo "exit $?"
+exit 2
+sysops@web-01:~$ echo '127.0.0.1 sysops.example' | sudo tee -a /etc/hosts
+[sudo] password for sysops:
+127.0.0.1 sysops.example
+sysops@web-01:~$ getent hosts sysops.example
+127.0.0.1       sysops.example
+sysops@web-01:~$ resolvectl query sysops.example
+sysops.example: ::1
+                127.0.0.1
+                (localhost)
+
+-- Information acquired via protocol DNS in 75.3ms.
+-- Data is authenticated: yes; Data was acquired via local or encrypted transpor
+t: yes
+-- Data from: synthetic
+sysops@web-01:~$

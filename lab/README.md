@@ -10,6 +10,8 @@ Everything that produces the spine's transcripts. See `LINUX-COURSE-PLAN.md`, "T
 | `build_base.py` | first boot with the seed, one normal reboot, `savevm base`. Rebuilding it invalidates the whole chain |
 | `capture.py` | the `ops` console: `su - sysops` in its own UTS namespace (hostname `ops`, no VM), an 80 × 43 pty, `pyte` recording what the terminal drew; `grab` saves full-screen programs |
 | `aptcache.py` | the VM's apt proxy on the lab host (:3142): serves the pinned archives from `$LAB/apt-cache`, fetching each file once over HTTPS. Started by `vm.py` |
+| `acme.py` | the lab's certificate authority: Pebble (Let's Encrypt's test ACME server) on the lab host as `acme.ops`, with its TLS cert from the lab CA in `keys/acme/`. Started by `vm.py`; VM ports 80/443 are forwarded so Pebble can validate |
+| `files/` | config files a step copies into the VM (nginx site, units, nftables) — scenes show the server's `cat` of them, not these |
 | `scripts/` | files a step uploads into the VM (`"upload"` in step.json), e.g. `traffic.sh` |
 | `replay.py` | the chain: restore the parent snapshot, run a step, write `session.txt` + `tty/*.json`, save. `--check` needs no VM |
 
@@ -34,6 +36,12 @@ cloud-localds /home/user/lab/images/seed.iso lab/seed/user-data lab/seed/meta-da
 Then `npm run replay` (stale steps only) or `npm run replay -- shell/04` (that step and what is
 stale after it). The lab host must run as root (it maps `web-01` in `/etc/hosts` and creates the
 host user `sysops`).
+
+## Snapshots kept
+
+A snapshot holds the VM's RAM (~0.5 GB): keeping all of them filled the 39 GB disk at course 8.
+`replay.py` keeps only `base` and each course's last step; replaying an earlier step rebuilds
+forward from the nearest kept snapshot (the steps in between should come back "same").
 
 ## Timings measured (TCG emulation, no KVM, 4 vCPU host)
 

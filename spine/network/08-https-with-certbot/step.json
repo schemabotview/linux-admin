@@ -1,0 +1,37 @@
+{
+ "note": "8.7: certbot gets a certificate from the lab's ACME server (Pebble on the lab host, acme.ops) and configures nginx. Hidden setup: acme.ops in /etc/hosts and the lab CA + Pebble's root trusted (the lab's stand-in for Let's Encrypt being trusted everywhere).",
+ "volatile": true,
+ "upload": {
+  "lab/keys/acme/ca.pem": "/tmp/lab-ca.pem"
+ },
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    {
+     "cmd": "echo '10.0.2.2 acme.ops' | sudo tee -a /etc/hosts > /dev/null",
+     "wait": "password for sysops: $"
+    },
+    {
+     "secret": "sysops"
+    },
+    "sudo cp /tmp/lab-ca.pem /usr/local/share/ca-certificates/lab-ca.crt && sudo update-ca-certificates > /dev/null",
+    "curl -s https://acme.ops:15000/roots/0 | sudo tee /usr/local/share/ca-certificates/lab-acme-root.crt > /dev/null && sudo update-ca-certificates > /dev/null",
+    "sudo -k",
+    "clear"
+   ]
+  },
+  {
+   "cmd": "sudo apt install -y certbot python3-certbot-nginx",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "sudo certbot --nginx --redirect -d sysops.example --server https://acme.ops:14000/dir -m ops@sysops.example --agree-tos -n",
+  "curl -sI https://sysops.example/ | head -n 2",
+  "curl -sI http://sysops.example/ | grep -E '^(HTTP|Location)'",
+  "sudo certbot certificates",
+  "grep -n -E 'ssl|443' /etc/nginx/sites-available/sysops.example"
+ ]
+}

@@ -1,0 +1,24 @@
+{
+ "note": "8.8 (full scene): one HTTPS request FROM OPS \u2014 through the gateway, the firewall's 443 rule, TLS, nginx, the file \u2014 and what web-01 recorded. Hidden: ops's curl trusts the lab root web-01 saved in 8.7 (CURL_CA_BUNDLE); ops resolves sysops.example to the lab's forward to web-01.",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "scp -q web-01:/usr/local/share/ca-certificates/lab-acme-root.crt ~/lab-root.pem",
+    "export CURL_CA_BUNDLE=~/lab-root.pem",
+    "clear"
+   ]
+  },
+  "getent hosts sysops.example",
+  "curl -sv https://sysops.example/ -o /dev/null 2>&1 | grep -E '^\\* (Connected|SSL connection|Server certificate)|^\\*  +(subject|issuer|expire)|^> (GET|Host)|^< HTTP'",
+  {
+   "cmd": "ssh -t web-01 \"sudo nft list chain inet filter input | grep 'the site'\"",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "ssh web-01 tail -n 1 /var/log/nginx/sysops.example.access.log",
+  "ssh web-01 cat /srv/sysops.example/index.html"
+ ]
+}

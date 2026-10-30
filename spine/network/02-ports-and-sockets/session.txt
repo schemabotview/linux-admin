@@ -1,0 +1,31 @@
+sysops@web-01:~$ ss -tln
+State     Recv-Q    Send-Q       Local Address:Port        Peer Address:Port
+LISTEN    0         4096            127.0.0.54:53               0.0.0.0:*
+LISTEN    0         4096         127.0.0.53%lo:53               0.0.0.0:*
+LISTEN    0         511                0.0.0.0:80               0.0.0.0:*
+LISTEN    0         128                0.0.0.0:22               0.0.0.0:*
+LISTEN    0         4096               0.0.0.0:5355             0.0.0.0:*
+LISTEN    0         128                   [::]:22                  [::]:*
+LISTEN    0         4096                  [::]:5355                [::]:*
+sysops@web-01:~$ sudo ss -tlnp
+[sudo] password for sysops:
+State     Recv-Q    Send-Q       Local Address:Port        Peer Address:Port
+Process
+LISTEN    0         4096            127.0.0.54:53               0.0.0.0:*
+ users:(("systemd-resolve",pid=336,fd=21))
+LISTEN    0         4096         127.0.0.53%lo:53               0.0.0.0:*
+ users:(("systemd-resolve",pid=336,fd=19))
+LISTEN    0         511                0.0.0.0:80               0.0.0.0:*
+ users:(("nginx",pid=846,fd=6),("nginx",pid=845,fd=6),("nginx",pid=844,fd=6))
+LISTEN    0         128                0.0.0.0:22               0.0.0.0:*
+ users:(("sshd",pid=588,fd=6))
+LISTEN    0         4096               0.0.0.0:5355             0.0.0.0:*
+ users:(("systemd-resolve",pid=336,fd=12))
+LISTEN    0         128                   [::]:22                  [::]:*
+ users:(("sshd",pid=588,fd=7))
+LISTEN    0         4096                  [::]:5355                [::]:*
+ users:(("systemd-resolve",pid=336,fd=14))
+sysops@web-01:~$ ss -tn
+State    Recv-Q    Send-Q       Local Address:Port        Peer Address:Port
+ESTAB    0         0                10.0.2.15:22              10.0.2.2:58008
+sysops@web-01:~$

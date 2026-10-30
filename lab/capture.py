@@ -45,6 +45,7 @@ ALT = re.compile(rb'(\x1b\[\?(?:1049|1047|47)[hl])')
 ALT_ON = {b'\x1b[?1049h', b'\x1b[?1047h', b'\x1b[?47h'}
 ALT_OFF = {b'\x1b[?1049l', b'\x1b[?1047l', b'\x1b[?47l'}
 DECSTBM = re.compile(rb'\x1b\[\d*(?:;\d*)?r')
+STATUS_ROW = re.compile(rb'\x1b7.*?\x1b8', re.S)
 SGR_COLON = re.compile(rb'\x1b\[[0-9;:]*:[0-9;:]*m')
 
 
@@ -107,6 +108,7 @@ class Console:
         fcntl.ioctl(fd, termios.TIOCSWINSZ, struct.pack('HHHH', ROWS, COLS, 0, 0))
         self.mark = 0
         self.alt = False
+        self.held = b''
         self.wait_prompt()
 
     # -- io --------------------------------------------------------------------------------------
@@ -139,7 +141,17 @@ class Console:
             elif not self.alt:
                 # a scroll region (DECSTBM) would make the never-scrolling tall screen scroll inside
                 # the pty's 43 rows and lose the top: a terminal's scrollback keeps those rows
-                self.stream.feed(DECSTBM.sub(b'', part))
+                part = DECSTBM.sub(b'', part)
+                # apt 3's progress bar: save cursor (ESC 7), draw on the BOTTOM row, restore (ESC 8). On
+                # the tall screen "the bottom row" is a transcript row, so the bar overwrote real output;
+                # a terminal erases the bar when apt ends. Drop each save…restore span (held until whole).
+                part = self.held + part
+                cut = part.rfind(b'\x1b7')
+                if cut != -1 and part.find(b'\x1b8', cut) == -1:
+                    part, self.held = part[:cut], part[cut:]
+                else:
+                    self.held = b''
+                self.stream.feed(STATUS_ROW.sub(b'', part))
         return True
 
     def settle(self, quiet: float = 1.0, timeout: float = 600) -> None:

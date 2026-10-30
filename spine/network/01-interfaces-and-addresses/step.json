@@ -1,0 +1,22 @@
+{
+ "note": "8.1: the interface, its address, the route out; ping the gateway.",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "ip -br address",
+  "ip route",
+  "ping -c 2 10.0.2.2",
+  {
+   "cmd": "sudo cat /etc/netplan/50-cloud-init.yaml",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  }
+ ]
+}

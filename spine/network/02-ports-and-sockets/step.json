@@ -1,0 +1,21 @@
+{
+ "note": "8.2: listening sockets, and which process holds each; this ssh connection.",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "ss -tln",
+  {
+   "cmd": "sudo ss -tlnp",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "ss -tn"
+ ]
+}
