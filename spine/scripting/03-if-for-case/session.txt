@@ -1,0 +1,36 @@
+sysops@web-01:~$ cp /tmp/check-paths . && chmod +x check-paths
+sysops@web-01:~$ cat check-paths
+#!/bin/bash
+# check-paths: ask the site for each path; fail if any answer is unexpected
+failed=0
+for path in / /status.txt /about.html /missing; do
+    code=$(curl -s -o /dev/null -w '%{http_code}' "https://sysops.example$path")
+    case $code in
+        200) echo "ok       $path" ;;
+        404) echo "missing  $path" ;;
+        *)   echo "ERROR    $path ($code)"; failed=$((failed + 1)) ;;
+    esac
+done
+if [ "$failed" -gt 0 ]; then
+    echo "$failed path(s) failed"
+    exit 1
+fi
+echo "all paths answered"
+sysops@web-01:~$ ./check-paths; echo "exit $?"
+ok       /
+ok       /status.txt
+ok       /about.html
+missing  /missing
+all paths answered
+exit 0
+sysops@web-01:~$ sudo systemctl stop nginx
+[sudo] password for sysops:
+sysops@web-01:~$ ./check-paths; echo "exit $?"
+ERROR    / (000)
+ERROR    /status.txt (000)
+ERROR    /about.html (000)
+ERROR    /missing (000)
+4 path(s) failed
+exit 1
+sysops@web-01:~$ sudo systemctl start nginx
+sysops@web-01:~$

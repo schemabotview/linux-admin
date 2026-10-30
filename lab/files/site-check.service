@@ -1,0 +1,7 @@
+[Unit]
+Description=Check that the site answers
+
+[Service]
+Type=oneshot
+User=deploy
+ExecStart=/usr/local/bin/site-check

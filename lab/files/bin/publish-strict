@@ -1,0 +1,7 @@
+#!/bin/bash
+# publish-strict: the same steps; stop at the first failure
+set -euo pipefail
+cp /srv/data/staging/index.htm /tmp/publish/
+echo "copied the page"
+grep -c sysops /srv/data/staging/missing.txt | wc -l
+echo "deployed: $SITE_DIR"

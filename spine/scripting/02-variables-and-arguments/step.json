@@ -1,0 +1,22 @@
+{
+ "note": "10.2: $1, a default with ${2:-\u2026}, command substitution, \"$@\" vs $@.",
+ "upload": {
+  "lab/files/bin/args": "/tmp/args",
+  "lab/files/bin/count-status": "/tmp/count-status"
+ },
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "cp /tmp/args /tmp/count-status . && chmod +x args count-status",
+  "cat count-status",
+  "./count-status 200",
+  "./count-status 404",
+  "./count-status 200 /var/log/nginx/access.log.1",
+  "cat args",
+  "./args \"two words\" three"
+ ]
+}

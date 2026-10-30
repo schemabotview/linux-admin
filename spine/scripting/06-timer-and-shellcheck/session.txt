@@ -1,0 +1,56 @@
+sysops@web-01:~$ sudo apt-get install -y -q shellcheck > /dev/null
+[sudo] password for sysops:
+sysops@web-01:~$ cp /tmp/cleanup-old .
+sysops@web-01:~$ shellcheck cleanup-old
+
+In cleanup-old line 4:
+cd $dir
+^-----^ SC2164 (warning): Use 'cd ... || exit' or 'cd ... || return' in case cd
+fails.
+   ^--^ SC2086 (info): Double quote to prevent globbing and word splitting.
+
+Did you mean:
+cd "$dir" || exit
+
+
+In cleanup-old line 5:
+for f in $(ls *.tar.gz); do
+         ^------------^ SC2045 (error): Iterating over ls output is fragile. Use
+ globs.
+              ^-- SC2035 (info): Use ./*glob* or -- *glob* so names with dashes
+won't become options.
+
+
+In cleanup-old line 6:
+    rm $f
+       ^-- SC2086 (info): Double quote to prevent globbing and word splitting.
+
+Did you mean:
+    rm "$f"
+
+For more information:
+  https://www.shellcheck.net/wiki/SC2045 -- Iterating over ls output is fragi...
+  https://www.shellcheck.net/wiki/SC2164 -- Use 'cd ... || exit' or 'cd ... |...
+  https://www.shellcheck.net/wiki/SC2035 -- Use ./*glob* or -- *glob* so name...
+sysops@web-01:~$ shellcheck /usr/local/bin/deploy-site && echo clean
+clean
+sysops@web-01:~$ sudo install -m 755 site-check /usr/local/bin/
+sysops@web-01:~$ sudo cp /tmp/site-check.service /tmp/site-check.timer /etc/syst
+emd/system/
+sysops@web-01:~$ sudo systemctl daemon-reload
+sysops@web-01:~$ sudo systemctl enable --now site-check.timer
+Created symlink '/etc/systemd/system/timers.target.wants/site-check.timer' → '/e
+tc/systemd/system/site-check.timer'.
+sysops@web-01:~$ systemctl list-timers site-check.timer --no-pager
+NEXT                        LEFT LAST PASSED UNIT             ACTIVATES
+Mon 2026-11-02 09:35:00 UTC  59s -         - site-check.timer site-check.service
+
+1 timers listed.
+Pass --all to see loaded but inactive timers, too.
+sysops@web-01:~$ sudo systemctl start site-check
+sysops@web-01:~$ journalctl -u site-check --no-pager -o cat | tail -n 4
+sysops.example answered 200
+site-check.service: Deactivated successfully.
+Finished site-check.service - Check that the site answers.
+site-check.service: Consumed 1.372s CPU time, 4.1M memory peak.
+sysops@web-01:~$

@@ -1,0 +1,5 @@
+#!/bin/bash
+# count-status CODE [LOG]: how many requests got the status CODE
+code=$1
+log=${2:-/var/log/nginx/sysops.example.access.log.1}
+echo "$code: $(grep -c "\" $code " "$log")"

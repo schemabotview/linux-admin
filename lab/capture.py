@@ -36,7 +36,7 @@ from pathlib import Path
 
 import pyte
 
-from vm import SSH_ADDR
+from vm import HOSTS
 
 COLS, ROWS = 80, 43
 PROMPT = re.compile(r'^(?:\S+@\S+:.*[$#]|\[\S+@\S+ [^\]]*\][$#]) $')
@@ -57,13 +57,14 @@ def setup_ops() -> None:
     ssh.mkdir(mode=0o700, exist_ok=True)
     shutil.copy(LAB_DIR / 'keys' / 'sysops_ed25519', ssh / 'id_ed25519')
     shutil.copy(LAB_DIR / 'keys' / 'sysops_ed25519.pub', ssh / 'id_ed25519.pub')
-    # known_hosts as OpenSSH writes it for a non-22 port, so `ssh web-01` never asks
-    pub = (LAB_DIR / 'keys' / 'ssh_host_ed25519_key.pub').read_text().split()[:2]
-    (ssh / 'known_hosts').write_text(f'web-01 {" ".join(pub)}\n')
+    # known_hosts as OpenSSH writes it, one line per lab host; /etc/hosts names their forwards
+    (ssh / 'known_hosts').write_text((LAB_DIR / 'keys' / 'known_hosts').read_text())
     (ssh / 'config').unlink(missing_ok=True)
     hosts = Path('/etc/hosts').read_text()
-    if 'web-01' not in hosts:
-        Path('/etc/hosts').write_text(hosts + f'{SSH_ADDR} web-01\n')
+    for name, spec in HOSTS.items():
+        if f' {name}\n' not in hosts:
+            hosts += f'{spec["addr"]} {name}\n'
+    Path('/etc/hosts').write_text(hosts)
     os.chmod(ssh / 'id_ed25519', 0o600)
     subprocess.run(['chown', '-R', 'sysops:sysops', str(ssh)], check=True)
 

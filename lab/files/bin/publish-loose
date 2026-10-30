@@ -1,0 +1,6 @@
+#!/bin/bash
+# publish-loose: the same three steps, with no safety net
+cp /srv/data/staging/index.htm /tmp/publish/
+echo "copied the page"
+grep -c sysops /srv/data/staging/missing.txt | wc -l
+echo "deployed: $SITE_DIR"

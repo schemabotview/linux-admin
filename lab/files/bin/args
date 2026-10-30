@@ -1,0 +1,7 @@
+#!/bin/bash
+# args: how the shell hands a script its arguments
+echo "$# arguments; the first is [$1]"
+echo 'quoted "$@":'
+for a in "$@"; do echo "  [$a]"; done
+echo 'unquoted $@:'
+for a in $@; do echo "  [$a]"; done

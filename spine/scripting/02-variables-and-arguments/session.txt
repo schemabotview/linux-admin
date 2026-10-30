@@ -1,0 +1,31 @@
+sysops@web-01:~$ cp /tmp/args /tmp/count-status . && chmod +x args count-status
+sysops@web-01:~$ cat count-status
+#!/bin/bash
+# count-status CODE [LOG]: how many requests got the status CODE
+code=$1
+log=${2:-/var/log/nginx/sysops.example.access.log.1}
+echo "$code: $(grep -c "\" $code " "$log")"
+sysops@web-01:~$ ./count-status 200
+200: 12
+sysops@web-01:~$ ./count-status 404
+404: 2
+sysops@web-01:~$ ./count-status 200 /var/log/nginx/access.log.1
+200: 86
+sysops@web-01:~$ cat args
+#!/bin/bash
+# args: how the shell hands a script its arguments
+echo "$# arguments; the first is [$1]"
+echo 'quoted "$@":'
+for a in "$@"; do echo "  [$a]"; done
+echo 'unquoted $@:'
+for a in $@; do echo "  [$a]"; done
+sysops@web-01:~$ ./args "two words" three
+2 arguments; the first is [two words]
+quoted "$@":
+  [two words]
+  [three]
+unquoted $@:
+  [two]
+  [words]
+  [three]
+sysops@web-01:~$

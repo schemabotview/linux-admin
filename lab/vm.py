@@ -18,8 +18,8 @@ import time
 from pathlib import Path
 
 LAB = Path(os.environ.get('LAB', '/home/user/lab/images'))
-# web-01's sshd, forwarded to its own loopback address so `ssh web-01` needs no port or config:
-# setup_ops() maps the name in the lab host's /etc/hosts.
+# Each host's sshd (and 80/443) is forwarded to its own loopback address, so `ssh web-01` needs no
+# port or config: setup_ops() maps the names in the lab host's /etc/hosts. web-01's is SSH_ADDR.
 SSH_ADDR = '127.0.0.11'
 HOSTS = {
     'web-01': {
@@ -27,6 +27,17 @@ HOSTS = {
         'mac': '52:54:00:10:20:11',
         'size': '8G',
         'data': '2G',
+        'addr': '127.0.0.11',
+        'seed': 'seed.iso',
+    },
+    # course 11. Rocky's cloud image is 10 GiB, so its overlay cannot be smaller.
+    'web-02': {
+        'image': 'Rocky-10-GenericCloud-Base-10.2-20260525.0.x86_64.qcow2',
+        'mac': '52:54:00:10:20:12',
+        'size': '10G',
+        'data': '1G',
+        'addr': '127.0.0.12',
+        'seed': 'seed-web-02.iso',
     },
 }
 CLOCK = '2026-11-02T09:00:00'
@@ -70,6 +81,7 @@ class VM:
         if not acme.running():  # the lab's ACME server (lab/acme.py), for course 8's certificate
             acme.start()
         kvm = os.path.exists('/dev/kvm')
+        a = self.spec['addr']
         self.qmp_path.unlink(missing_ok=True)
         cmd = [
             'qemu-system-x86_64', '-name', self.host, '-machine', 'q35',
@@ -77,13 +89,13 @@ class VM:
             '-smp', '2', '-m', '2048',
             '-rtc', f'base={CLOCK},clock=vm',
             '-drive', f'file={self.disk},if=virtio,format=qcow2,discard=unmap',
-            '-netdev', f'user,id=n0,hostname={self.host},hostfwd=tcp:{SSH_ADDR}:22-:22,hostfwd=tcp:{SSH_ADDR}:80-:80,hostfwd=tcp:{SSH_ADDR}:443-:443',
+            '-netdev', f'user,id=n0,hostname={self.host},hostfwd=tcp:{a}:22-:22,hostfwd=tcp:{a}:80-:80,hostfwd=tcp:{a}:443-:443',
             '-device', f'virtio-net-pci,netdev=n0,mac={self.spec["mac"]}',
             '-qmp', f'unix:{self.qmp_path},server=on,wait=off',
             '-display', 'none', '-serial', f'file:{LAB / (self.host + ".console.log")}',
         ]
         cmd += ['-drive', f'file={self.data},if=virtio,format=qcow2,discard=unmap']  # vdb: empty until course 9
-        cmd += ['-cdrom', str(LAB / 'seed.iso')]  # a CD, so it does not take a vd* name
+        cmd += ['-cdrom', str(LAB / self.spec['seed'])]  # a CD, so it does not take a vd* name
         if loadvm:
             cmd += ['-loadvm', loadvm]
         self.proc = subprocess.Popen(cmd)
@@ -134,7 +146,7 @@ class VM:
     def wait_ssh(self, timeout: float = 900) -> None:
         end = time.time() + timeout
         while time.time() < end:
-            r = subprocess.run(['ssh', *ssh_opts(), '-o', 'ConnectTimeout=5', 'web-01', 'true'], capture_output=True)
+            r = subprocess.run(['ssh', *ssh_opts(self.host), '-o', 'ConnectTimeout=5', self.host, 'true'], capture_output=True)
             if r.returncode == 0:
                 return
             time.sleep(3)
@@ -154,8 +166,8 @@ class VM:
 KEY = Path(__file__).parent / 'keys' / 'sysops_ed25519'
 
 
-def ssh_opts() -> list[str]:
+def ssh_opts(host: str = 'web-01') -> list[str]:
     known = Path(__file__).parent / 'keys' / 'known_hosts'
     return ['-F', '/dev/null', '-i', str(KEY), '-o', 'IdentitiesOnly=yes', '-o', f'UserKnownHostsFile={known}',
-            '-o', 'StrictHostKeyChecking=yes', '-o', 'HostKeyAlias=web-01',
-            '-o', 'User=sysops', '-o', f'HostName={SSH_ADDR}']
+            '-o', 'StrictHostKeyChecking=yes', '-o', f'HostKeyAlias={host}',
+            '-o', 'User=sysops', '-o', f'HostName={HOSTS[host]["addr"]}']

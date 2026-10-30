@@ -1,0 +1,29 @@
+{
+ "note": "10.5: a staging directory, the team's deploy script installed, run as deploy; the site shows the change.",
+ "volatile": true,
+ "upload": {
+  "lab/files/bin/deploy-site": "/tmp/deploy-site"
+ },
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  {
+   "cmd": "sudo install -d -o sysops -g site -m 2775 /srv/data/staging",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "cp /srv/sysops.example/index.html /srv/sysops.example/about.html /srv/data/staging/",
+  "echo '<p>Published by deploy-site.</p>' >> /srv/data/staging/index.html",
+  "sudo install -m 755 /tmp/deploy-site /usr/local/bin/",
+  "cat /usr/local/bin/deploy-site",
+  "sudo -u deploy deploy-site",
+  "curl -s https://sysops.example/",
+  "ls -l /srv/sysops.example"
+ ]
+}

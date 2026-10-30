@@ -36,6 +36,19 @@ LOCK = SPINE / 'chain.lock'
 COURSES = ['intro', 'shell', 'packages', 'text', 'users', 'processes', 'services', 'network', 'storage', 'scripting', 'rhel']
 
 
+HOST_OF = {'rhel': 'web-02'}  # every other course runs on web-01
+SEED = {'web-01': 'seed/user-data', 'web-02': 'seed/web-02/user-data'}
+
+
+def base_key(host: str) -> str:
+    """A host's base is part of its chain: its seed and its devices. Only the fields that shape the VM
+    count (an added host or a new address must not make every step stale)."""
+    from vm import HOSTS
+    spec = {k: HOSTS[host][k] for k in ('image', 'mac', 'size', 'data')}
+    base = (ROOT / 'lab' / SEED[host]).read_bytes() + json.dumps({host: spec}, sort_keys=True).encode()
+    return hashlib.sha256(f'{host} base'.encode() + base).hexdigest()
+
+
 def steps() -> list[dict]:
     out = []
     for course in COURSES:
@@ -46,20 +59,18 @@ def steps() -> list[dict]:
             spec = json.loads((s / 'step.json').read_text())
             # an uploaded file is part of the step: editing it makes the step stale
             raw = (s / 'step.json').read_bytes() + b''.join((ROOT / src).read_bytes() for src in spec.get('upload', {}))
-            out.append({'dir': s, 'tag': f'{course}-{s.name[:2]}', 'spec': spec, 'raw': raw})
-    # the base is part of the chain: its seed and the VM's devices (a second disk changed every snapshot)
-    from vm import HOSTS
-    base = (ROOT / 'lab' / 'seed' / 'user-data').read_bytes() + json.dumps(HOSTS, sort_keys=True).encode()
-    parent, key = 'base', hashlib.sha256(b'web-01 base' + base).hexdigest()
+            out.append({'dir': s, 'tag': f'{course}-{s.name[:2]}', 'spec': spec, 'raw': raw, 'host': HOST_OF.get(course, 'web-01')})
+    state = {}  # per host: (parent tag, parent key)
     for s in out:
+        parent, key = state.get(s['host'], ('base', base_key(s['host'])))
         s['parent'] = parent
         s['key'] = hashlib.sha256(key.encode() + s['raw']).hexdigest()
         if not s['spec'].get('branch'):
-            parent, key = s['tag'], s['key']
+            state[s['host']] = (s['tag'], s['key'])
     return out
 
 
-def keep_tags(chain: list[dict]) -> set[str]:
+def keep_tags(chain: list[dict]) -> set[str]:  # tags are course-qualified, so one set serves every host
     """The snapshots worth keeping: base and each course's last (non-branch) step. A snapshot holds the
     VM's RAM (~0.5 GB): keeping every step's filled a 39 GB disk at course 8. Replaying an earlier
     step rebuilds forward from the nearest kept one."""
@@ -93,44 +104,55 @@ def replay(only: str | None) -> int:
     from vm import VM, ssh_opts
 
     lock = json.loads(LOCK.read_text()) if LOCK.exists() else {}
-    vm = VM('web-01')
-    live = set(vm.snapshots())
+    live = {h: set(VM(h).snapshots()) if VM(h).disk.exists() else set() for h in {*HOST_OF.values(), 'web-01'}}
     chain = steps()
     start = None
     if only:
         course, nn = only.split('/')
         start = next(i for i, s in enumerate(chain) if s['tag'] == f'{course}-{nn[:2]}')
-    todo, dirty = [], False
+    todo, dirty = [], set()
     for i, s in enumerate(chain):
         stale = lock.get(s['tag']) != s['key']
-        if (start is not None and i == start) or stale or (dirty and not s['spec'].get('branch')):
+        if (start is not None and i == start) or stale or (s['host'] in dirty and not s['spec'].get('branch')):
             todo.append(s)
-            dirty = dirty or not s['spec'].get('branch')
+            if not s['spec'].get('branch'):
+                dirty.add(s['host'])
     if not todo:
         print('nothing stale')
         return 0
-    # The first step's parent may have been pruned (keep_tags): rebuild forward from the nearest
-    # ancestor that is still there, re-running the steps in between (their transcripts should be "same").
+    # A step's parent may have been pruned (keep_tags): rebuild forward from the nearest ancestor that is
+    # still there, re-running the steps in between (their transcripts should be "same").
     by_tag = {s['tag']: s for s in chain}
-    while todo[0]['parent'] != 'base' and todo[0]['parent'] not in live:
-        todo.insert(0, by_tag[todo[0]['parent']])
+    i = 0
+    while i < len(todo):
+        s = todo[i]
+        if s['parent'] != 'base' and s['parent'] not in live[s['host']] and by_tag[s['parent']] not in todo:
+            todo.insert(i, by_tag[s['parent']])
+            continue
+        i += 1
+    todo.sort(key=chain.index)
     keep = keep_tags(chain)
     setup_ops()
-    vm.start(loadvm=todo[0]['parent'])
+    vm = None
     try:
         for s in todo:
             t0 = time.time()
+            if vm is None or vm.host != s['host']:  # ONE VM at a time: stop the other before starting this one
+                if vm:
+                    vm.stop()
+                vm = VM(s['host'])
+                vm.start(loadvm=s['parent'])
             vm.restore(s['parent'])
             for src, dst in s['spec'].get('upload', {}).items():  # lab files the session uses (never shown)
                 vm.wait_ssh()
-                subprocess.run(['scp', '-q', *ssh_opts(), str(ROOT / src), f'web-01:{dst}'], check=True)
+                subprocess.run(['scp', '-q', *ssh_opts(s['host']), str(ROOT / src), f"{s['host']}:{dst}"], check=True)
             con = Console()
             grabs: dict = {}
             con.run(s['spec']['session'], grabs)
             text = con.transcript()
             con.close()
             if 'serial' in s['spec']:  # the VM's own console (what a provider's console shows), e.g. after a failed boot
-                log = (vm.disk.parent / 'web-01.console.log').read_bytes().decode('utf-8', 'replace')
+                log = (vm.disk.parent / f"{s['host']}.console.log").read_bytes().decode('utf-8', 'replace')
                 clean = [re.sub(r'\x1b\[[0-9;?]*[A-Za-z]', '', l).replace('\r', '').rstrip() for l in log.split('\n')]
                 (s['dir'] / 'serial.txt').write_text('\n'.join([l for l in clean if l][-s['spec']['serial']:]) + '\n')
             old = (s['dir'] / 'session.txt').read_text() if (s['dir'] / 'session.txt').exists() else None
@@ -151,7 +173,8 @@ def replay(only: str | None) -> int:
             print(f'{s["tag"]:<16} {"changed" if changed else "same":<8} {time.time() - t0:5.0f}s'
                   f'{"  (branch, discarded)" if s["spec"].get("branch") else ""}', flush=True)
     finally:
-        vm.stop()
+        if vm:
+            vm.stop()
     return 0
 
 

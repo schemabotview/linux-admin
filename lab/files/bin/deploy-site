@@ -1,0 +1,19 @@
+#!/bin/bash
+# deploy-site: publish the staging copy, then check the site answers.
+# Run as deploy:  sudo -u deploy /usr/local/bin/deploy-site
+set -euo pipefail
+cd /    # not wherever it was started from: deploy may not read that
+
+src=/srv/data/staging/
+dst=/srv/sysops.example/
+
+# -rlt, not -a: deploy may write the files, not set root's dir times
+rsync -rlt --omit-dir-times --delete --exclude status.txt \
+    --itemize-changes "$src" "$dst"
+
+code=$(curl -s -o /dev/null -w '%{http_code}' https://sysops.example/)
+if [ "$code" != 200 ]; then
+    echo "deploy FAILED: the site answered $code" >&2
+    exit 1
+fi
+echo "deployed $(find "$dst" -type f | wc -l) files; the site answers $code"

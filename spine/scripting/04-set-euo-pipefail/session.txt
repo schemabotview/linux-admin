@@ -1,0 +1,29 @@
+sysops@web-01:~$ cp /tmp/publish-loose /tmp/publish-strict . && chmod +x publish
+-*
+sysops@web-01:~$ cat publish-strict
+#!/bin/bash
+# publish-strict: the same steps; stop at the first failure
+set -euo pipefail
+cp /srv/data/staging/index.htm /tmp/publish/
+echo "copied the page"
+grep -c sysops /srv/data/staging/missing.txt | wc -l
+echo "deployed: $SITE_DIR"
+sysops@web-01:~$ ./publish-loose; echo "exit $?"
+cp: cannot stat '/srv/data/staging/index.htm': No such file or directory
+copied the page
+grep: /srv/data/staging/missing.txt: No such file or directory
+0
+deployed:
+exit 0
+sysops@web-01:~$ ./publish-strict; echo "exit $?"
+cp: cannot stat '/srv/data/staging/index.htm': No such file or directory
+exit 1
+sysops@web-01:~$ bash -c 'false | true; echo "pipeline: $?"'
+pipeline: 0
+sysops@web-01:~$ bash -c 'set -o pipefail; false | true; echo "pipeline: $?"'
+pipeline: 1
+sysops@web-01:~$ bash -c 'echo "dir: [$SITE_DIR]"'
+dir: []
+sysops@web-01:~$ bash -c 'set -u; echo "dir: [$SITE_DIR]"'
+bash: line 1: SITE_DIR: unbound variable
+sysops@web-01:~$

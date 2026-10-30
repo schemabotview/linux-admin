@@ -1,0 +1,5 @@
+#!/bin/bash
+# site-check: does the site answer? Exit 0 if it does.
+code=$(curl -s -o /dev/null -w '%{http_code}' https://sysops.example/)
+echo "sysops.example answered $code"
+[ "$code" = 200 ]

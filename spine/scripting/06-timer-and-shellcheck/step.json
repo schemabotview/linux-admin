@@ -1,0 +1,34 @@
+{
+ "note": "10.6: shellcheck on a careless draft and on deploy-site; site-check installed and run every five minutes by a timer.",
+ "volatile": true,
+ "upload": {
+  "lab/files/bin/cleanup-old": "/tmp/cleanup-old",
+  "lab/files/site-check.service": "/tmp/site-check.service",
+  "lab/files/site-check.timer": "/tmp/site-check.timer"
+ },
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  {
+   "cmd": "sudo apt-get install -y -q shellcheck > /dev/null",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "cp /tmp/cleanup-old .",
+  "shellcheck cleanup-old",
+  "shellcheck /usr/local/bin/deploy-site && echo clean",
+  "sudo install -m 755 site-check /usr/local/bin/",
+  "sudo cp /tmp/site-check.service /tmp/site-check.timer /etc/systemd/system/",
+  "sudo systemctl daemon-reload",
+  "sudo systemctl enable --now site-check.timer",
+  "systemctl list-timers site-check.timer --no-pager",
+  "sudo systemctl start site-check",
+  "journalctl -u site-check --no-pager -o cat | tail -n 4"
+ ]
+}

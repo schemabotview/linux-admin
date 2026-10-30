@@ -1,0 +1,26 @@
+{
+ "note": "10.3: a loop over paths, a case on the status, an if on the failures, and the script's exit status.",
+ "upload": {
+  "lab/files/bin/check-paths": "/tmp/check-paths"
+ },
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "cp /tmp/check-paths . && chmod +x check-paths",
+  "cat check-paths",
+  "./check-paths; echo \"exit $?\"",
+  {
+   "cmd": "sudo systemctl stop nginx",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "./check-paths; echo \"exit $?\"",
+  "sudo systemctl start nginx"
+ ]
+}

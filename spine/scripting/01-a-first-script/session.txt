@@ -1,0 +1,29 @@
+sysops@web-01:~$ cp /tmp/site-check .
+sysops@web-01:~$ cat site-check
+#!/bin/bash
+# site-check: does the site answer? Exit 0 if it does.
+code=$(curl -s -o /dev/null -w '%{http_code}' https://sysops.example/)
+echo "sysops.example answered $code"
+[ "$code" = 200 ]
+sysops@web-01:~$ ./site-check
+-bash: ./site-check: Permission denied
+sysops@web-01:~$ ls -l site-check
+-rw-r--r-- 1 sysops sysops 193 Nov  2 09:30 site-check
+sysops@web-01:~$ chmod +x site-check
+sysops@web-01:~$ ./site-check
+sysops.example answered 200
+sysops@web-01:~$ echo $?
+0
+sysops@web-01:~$ sudo systemctl stop nginx
+[sudo] password for sysops:
+sysops@web-01:~$ ./site-check; echo "exit $?"
+sysops.example answered 000
+exit 1
+sysops@web-01:~$ ./site-check && echo up || echo DOWN
+sysops.example answered 000
+DOWN
+sysops@web-01:~$ sudo systemctl start nginx
+sysops@web-01:~$ ./site-check && echo up || echo DOWN
+sysops.example answered 200
+up
+sysops@web-01:~$

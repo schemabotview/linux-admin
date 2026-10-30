@@ -1,0 +1,32 @@
+{
+ "note": "10.1: a script: shebang, chmod +x, its exit status, && and ||.",
+ "upload": {
+  "lab/files/bin/site-check": "/tmp/site-check"
+ },
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "cp /tmp/site-check .",
+  "cat site-check",
+  "./site-check",
+  "ls -l site-check",
+  "chmod +x site-check",
+  "./site-check",
+  "echo $?",
+  {
+   "cmd": "sudo systemctl stop nginx",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "./site-check; echo \"exit $?\"",
+  "./site-check && echo up || echo DOWN",
+  "sudo systemctl start nginx",
+  "./site-check && echo up || echo DOWN"
+ ]
+}

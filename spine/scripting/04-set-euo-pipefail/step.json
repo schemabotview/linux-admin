@@ -1,0 +1,23 @@
+{
+ "note": "10.4: the same failing steps without and with set -e; then pipefail and -u on their own.",
+ "upload": {
+  "lab/files/bin/publish-loose": "/tmp/publish-loose",
+  "lab/files/bin/publish-strict": "/tmp/publish-strict"
+ },
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "cp /tmp/publish-loose /tmp/publish-strict . && chmod +x publish-*",
+  "cat publish-strict",
+  "./publish-loose; echo \"exit $?\"",
+  "./publish-strict; echo \"exit $?\"",
+  "bash -c 'false | true; echo \"pipeline: $?\"'",
+  "bash -c 'set -o pipefail; false | true; echo \"pipeline: $?\"'",
+  "bash -c 'echo \"dir: [$SITE_DIR]\"'",
+  "bash -c 'set -u; echo \"dir: [$SITE_DIR]\"'"
+ ]
+}

@@ -1,0 +1,37 @@
+#cloud-config
+# web-02's base (Rocky Linux 10.2): the same team, the other family. See lab/README.md.
+hostname: web-02
+fqdn: web-02
+manage_etc_hosts: true
+timezone: Etc/UTC
+ssh_pwauth: true
+users:
+  - name: sysops
+    gecos: Sysops team
+    shell: /bin/bash
+    lock_passwd: false
+    passwd: "$6$sysopslab$YXsngArpB5C8Ouk1Wz/KktkDIQhWoUwPapMxtM2Iian/s5CdZkDFjgEUZSDTv53Ovtlgh1591EIRUboWJN86z."
+    groups: [wheel]
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAFKMejhiQS5quNwP4yPeGY+Np47AEVtPlqdEkpgb3Mq sysops@ops
+ssh_deletekeys: true
+ssh_genkeytypes: []
+ssh_keys:
+  ed25519_private: |
+    -----BEGIN OPENSSH PRIVATE KEY-----
+    b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+    QyNTUxOQAAACCc3HGS+qq7Y3zv8U1g+wuke6+yhLoXkfiFmyypE8LdNgAAAJBbpgTaW6YE
+    2gAAAAtzc2gtZWQyNTUxOQAAACCc3HGS+qq7Y3zv8U1g+wuke6+yhLoXkfiFmyypE8LdNg
+    AAAECMjDCvwrrifyVJ0of+b8m7fjW6dtYsKsSrwhQE8h7W/ZzccZL6qrtjfO/xTWD7C6R7
+    r7KEuheR+IWbLKkTwt02AAAABndlYi0wMgECAwQFBgc=
+    -----END OPENSSH PRIVATE KEY-----
+  ed25519_public: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJzccZL6qrtjfO/xTWD7C6R7r7KEuheR+IWbLKkTwt02 web-02
+package_update: false
+package_upgrade: false
+runcmd:
+  # the 10.2 tree, through the lab host's package cache (lab/aptcache.py), which pins it after the first fetch
+  - [sh, -c, "sed -i -e 's/^mirrorlist=/#mirrorlist=/' -e 's|^#baseurl=http://dl.rockylinux.org/$contentdir/$releasever|baseurl=http://dl.rockylinux.org/pub/rocky/10.2|' /etc/yum.repos.d/rocky*.repo"]
+  - [sh, -c, "echo proxy=http://10.0.2.2:3142 >> /etc/dnf/dnf.conf"]
+  # nothing may run dnf or move the clock behind a replay's back
+  - [systemctl, disable, --now, dnf-makecache.timer, chronyd.service]
+  - [touch, /etc/cloud/cloud-init.disabled]

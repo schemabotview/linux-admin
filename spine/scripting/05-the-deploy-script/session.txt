@@ -1,0 +1,41 @@
+sysops@web-01:~$ sudo install -d -o sysops -g site -m 2775 /srv/data/staging
+[sudo] password for sysops:
+sysops@web-01:~$ cp /srv/sysops.example/index.html /srv/sysops.example/about.htm
+l /srv/data/staging/
+sysops@web-01:~$ echo '<p>Published by deploy-site.</p>' >> /srv/data/staging/in
+dex.html
+sysops@web-01:~$ sudo install -m 755 /tmp/deploy-site /usr/local/bin/
+sysops@web-01:~$ cat /usr/local/bin/deploy-site
+#!/bin/bash
+# deploy-site: publish the staging copy, then check the site answers.
+# Run as deploy:  sudo -u deploy /usr/local/bin/deploy-site
+set -euo pipefail
+cd /    # not wherever it was started from: deploy may not read that
+
+src=/srv/data/staging/
+dst=/srv/sysops.example/
+
+# -rlt, not -a: deploy may write the files, not set root's dir times
+rsync -rlt --omit-dir-times --delete --exclude status.txt \
+    --itemize-changes "$src" "$dst"
+
+code=$(curl -s -o /dev/null -w '%{http_code}' https://sysops.example/)
+if [ "$code" != 200 ]; then
+    echo "deploy FAILED: the site answered $code" >&2
+    exit 1
+fi
+echo "deployed $(find "$dst" -type f | wc -l) files; the site answers $code"
+sysops@web-01:~$ sudo -u deploy deploy-site
+>f..t...... about.html
+>f.st...... index.html
+deployed 3 files; the site answers 200
+sysops@web-01:~$ curl -s https://sysops.example/
+<h1>sysops.example</h1>
+<p>updated</p>
+<p>Published by deploy-site.</p>
+sysops@web-01:~$ ls -l /srv/sysops.example
+total 8
+-rw-r--r-- 1 deploy site  0 Nov  2 09:32 about.html
+-rw-rw-r-- 1 deploy site 72 Nov  2 09:32 index.html
+-rw-r--r-- 1 deploy site 24 Nov  2 09:19 status.txt
+sysops@web-01:~$
