@@ -1,0 +1,24 @@
+sysops@web-01:~$ sudo mkdir /srv/data
+[sudo] password for sysops:
+sysops@web-01:~$ sudo mount /dev/vdb1 /srv/data
+sysops@web-01:~$ findmnt /srv/data
+TARGET    SOURCE    FSTYPE OPTIONS
+/srv/data /dev/vdb1 ext4   rw,relatime
+sysops@web-01:~$ df -h / /srv/data
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda1       7.7G  831M  6.6G  12% /
+/dev/vdb1       2.0G  532K  1.9G   1% /srv/data
+sysops@web-01:~$ sudo blkid /dev/vdb1
+/dev/vdb1: LABEL="data" UUID="8fa03ca0-6122-4d1b-8dc2-41509287ecb9" BLOCK_SIZE="
+4096" TYPE="ext4" PARTUUID="f58087f2-01"
+sysops@web-01:~$ echo "UUID=$(sudo blkid -s UUID -o value /dev/vdb1) /srv/data e
+xt4 defaults,nofail 0 2" | sudo tee -a /etc/fstab
+UUID=8fa03ca0-6122-4d1b-8dc2-41509287ecb9 /srv/data ext4 defaults,nofail 0 2
+sysops@web-01:~$ sudo umount /srv/data
+sysops@web-01:~$ sudo mount -a
+mount: (hint) your fstab has been modified, but systemd still uses
+       the old version; use 'systemctl daemon-reload' to reload.
+sysops@web-01:~$ findmnt /srv/data
+TARGET    SOURCE    FSTYPE OPTIONS
+/srv/data /dev/vdb1 ext4   rw,relatime
+sysops@web-01:~$

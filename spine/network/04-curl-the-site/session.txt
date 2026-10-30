@@ -13,12 +13,12 @@ sysops@web-01:~$ curl -v http://sysops.example/
 * Request completely sent off
 < HTTP/1.1 200 OK
 < Server: nginx
-< Date: Mon, 02 Nov 2026 09:21:22 GMT
+< Date: Mon, 02 Nov 2026 09:20:46 GMT
 < Content-Type: text/html
 < Content-Length: 24
-< Last-Modified: Mon, 02 Nov 2026 09:18:21 GMT
+< Last-Modified: Mon, 02 Nov 2026 09:17:50 GMT
 < Connection: keep-alive
-< ETag: "6ae8555d-18"
+< ETag: "6ae8553e-18"
 < Accept-Ranges: bytes
 <
 <h1>sysops.example</h1>

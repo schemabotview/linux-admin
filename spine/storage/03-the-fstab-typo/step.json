@@ -1,0 +1,29 @@
+{
+ "note": "9.2, branch (discarded): a wrong UUID without nofail; reboot; the server never answers; its console shows emergency mode.",
+ "branch": true,
+ "serial": 22,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  {
+   "cmd": "sudo sed -i 's|^UUID=[^ ]*\\( /srv/data .*\\),nofail|UUID=00000000-0000-0000-0000-000000000000\\1|' /etc/fstab",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "tail -n 1 /etc/fstab",
+  {
+   "cmd": "sudo systemctl reboot",
+   "wait": "sysops@ops:~\\$ $"
+  },
+  {
+   "cmd": "sleep 200; ssh -o ConnectTimeout=15 web-01",
+   "wait": "sysops@ops:~\\$ $"
+  }
+ ]
+}

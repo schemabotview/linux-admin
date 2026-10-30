@@ -26,6 +26,7 @@ HOSTS = {
         'image': 'debian-13-genericcloud-amd64-20261026-2643.qcow2',
         'mac': '52:54:00:10:20:11',
         'size': '8G',
+        'data': '2G',
     },
 }
 CLOCK = '2026-11-02T09:00:00'
@@ -36,16 +37,21 @@ class VM:
         self.host = host
         self.spec = HOSTS[host]
         self.disk = LAB / f'{host}.qcow2'
+        self.data = LAB / f'{host}-data.qcow2'
         self.qmp_path = LAB / f'{host}.qmp'
         self.proc: subprocess.Popen | None = None
         self.sock: socket.socket | None = None
 
     # -- disk ---------------------------------------------------------------------------------
     def create_disk(self) -> None:
-        """A fresh overlay over the pinned image. Throws away every snapshot of this host."""
+        """A fresh overlay over the pinned image, and an EMPTY second disk (vdb, course 9). Throws away
+        every snapshot of this host. The second disk is there from the base on because a snapshot
+        restores only into the device set it was saved with."""
         self.disk.unlink(missing_ok=True)
+        self.data.unlink(missing_ok=True)
         subprocess.run(['qemu-img', 'create', '-q', '-f', 'qcow2', '-F', 'qcow2',
                         '-b', str(LAB / self.spec['image']), str(self.disk), self.spec['size']], check=True)
+        subprocess.run(['qemu-img', 'create', '-q', '-f', 'qcow2', str(self.data), self.spec['data']], check=True)
 
     def snapshots(self) -> list[str]:
         out = subprocess.run(['qemu-img', 'snapshot', '-l', str(self.disk)], capture_output=True, text=True).stdout
@@ -53,8 +59,9 @@ class VM:
 
     # -- process ------------------------------------------------------------------------------
     def start(self, loadvm: str | None = None) -> None:
-        """The seed ISO is ALWAYS attached: a snapshot restores only into the device set it was saved
-        with, and the base was saved after first boot with it in. cloud-init is disabled by then."""
+        """The seed CD and the second disk are ALWAYS attached: a snapshot restores only into the device
+        set it was saved with, and the base was saved after first boot with them in. cloud-init is
+        disabled by then."""
         import aptcache
         if not aptcache.running():  # the VM's apt proxy (lab/aptcache.py); it outlives the VM, harmlessly
             subprocess.Popen([sys.executable, str(Path(__file__).parent / 'aptcache.py')], start_new_session=True,
@@ -75,7 +82,8 @@ class VM:
             '-qmp', f'unix:{self.qmp_path},server=on,wait=off',
             '-display', 'none', '-serial', f'file:{LAB / (self.host + ".console.log")}',
         ]
-        cmd += ['-drive', f'file={LAB / "seed.iso"},if=virtio,format=raw,readonly=on']
+        cmd += ['-drive', f'file={self.data},if=virtio,format=qcow2,discard=unmap']  # vdb: empty until course 9
+        cmd += ['-cdrom', str(LAB / 'seed.iso')]  # a CD, so it does not take a vd* name
         if loadvm:
             cmd += ['-loadvm', loadvm]
         self.proc = subprocess.Popen(cmd)
@@ -117,7 +125,8 @@ class VM:
 
     def snapshots_live(self) -> list[str]:
         out = self.hmp('info snapshots')
-        return [line.split()[1] for line in out.splitlines() if line.split() and line.split()[0].isdigit()]
+        # rows are `<ID> <TAG> …`; with more than one disk the ID column reads `--`
+        return [f[1] for f in (line.split() for line in out.splitlines()) if len(f) > 1 and (f[0].isdigit() or f[0] == '--')]
 
     def restore(self, tag: str) -> None:
         self.hmp(f'loadvm {tag}')

@@ -19,7 +19,7 @@ Get:1 http://snapshot.debian.org/archive/debian-security/20261026T000000Z trixie
 -security/main amd64 nginx-common all 1.26.3-3+deb13u10 [112 kB]
 Get:2 http://snapshot.debian.org/archive/debian-security/20261026T000000Z trixie
 -security/main amd64 nginx amd64 1.26.3-3+deb13u10 [614 kB]
-Fetched 725 kB in 1s (1331 kB/s)
+Fetched 725 kB in 1s (1392 kB/s)
 Preconfiguring packages ...
 Selecting previously unselected package nginx-common.
 (Reading database ... 20630 files and directories currently installed.)
@@ -37,12 +37,12 @@ Processing triggers for man-db (2.13.1-1) ...
 sysops@web-01:~$ curl -sI localhost
 HTTP/1.1 200 OK
 Server: nginx
-Date: Mon, 02 Nov 2026 09:08:20 GMT
+Date: Mon, 02 Nov 2026 09:07:51 GMT
 Content-Type: text/html
 Content-Length: 615
-Last-Modified: Mon, 02 Nov 2026 09:07:48 GMT
+Last-Modified: Mon, 02 Nov 2026 09:07:19 GMT
 Connection: keep-alive
-ETag: "6ae852e4-267"
+ETag: "6ae852c7-267"
 Accept-Ranges: bytes
 
 sysops@web-01:~$

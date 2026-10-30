@@ -2,18 +2,18 @@ sysops@web-01:~$ pstree -s $$
 systemd───sshd───sshd-session───sshd-session───bash───pstree
 sysops@web-01:~$ ps -o user,pid,ppid,cmd -C nginx
 USER         PID    PPID CMD
-root        1096       1 nginx: master process /usr/sbin/nginx -g daemon on; mas
-www-data    1098    1096 nginx: worker process
-www-data    1099    1096 nginx: worker process
+root        1091       1 nginx: master process /usr/sbin/nginx -g daemon on; mas
+www-data    1094    1091 nginx: worker process
+www-data    1095    1091 nginx: worker process
 sysops@web-01:~$ ps aux --sort=-rss | head -n 5
 USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root           1  5.6  0.7  23868 14888 ?        Ss   09:02   0:38 /sbin/init
-systemd+     335  0.6  0.7  23364 14380 ?        Ss   09:03   0:04 /usr/lib/syst
+root           1  4.8  0.7  23864 14416 ?        Ss   09:02   0:33 /sbin/init
+systemd+     330  0.6  0.7  23364 14320 ?        Ss   09:02   0:04 /usr/lib/syst
 emd/systemd-resolved
-root         290  1.5  0.6  51320 12840 ?        Ss   09:03   0:10 /usr/lib/syst
+root         285  1.3  0.5  51312 12024 ?        Ss   09:02   0:09 /usr/lib/syst
 emd/systemd-journald
-root        1708  8.2  0.5  19252 12008 ?        Ss   09:14   0:00 sshd-session:
- sysops [priv]
+sysops       623  0.2  0.5  21796 11964 ?        Ss   09:03   0:01 /usr/lib/syst
+emd/systemd --user
 sysops@web-01:~$ ps -e --no-headers | wc -l
-100
+101
 sysops@web-01:~$

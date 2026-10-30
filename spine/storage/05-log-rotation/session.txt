@@ -1,0 +1,41 @@
+sysops@web-01:~$ cat /etc/logrotate.d/nginx
+/var/log/nginx/*.log {
+        daily
+        missingok
+        rotate 14
+        compress
+        delaycompress
+        notifempty
+        create 0640 www-data adm
+        sharedscripts
+        prerotate
+                if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
+                        run-parts /etc/logrotate.d/httpd-prerotate; \
+                fi \
+        endscript
+        postrotate
+                invoke-rc.d nginx rotate >/dev/null 2>&1
+        endscript
+}
+sysops@web-01:~$ ls /var/log/nginx
+access.log  error.log  sysops.example.access.log
+sysops@web-01:~$ sudo logrotate -f /etc/logrotate.d/nginx
+[sudo] password for sysops:
+sudo: logrotate: command not found
+sysops@web-01:~$ sudo apt-get install -y -q logrotate > /dev/null
+sysops@web-01:~$ sudo logrotate -f /etc/logrotate.d/nginx
+sysops@web-01:~$ ls -l /var/log/nginx
+total 20
+-rw-r----- 1 www-data adm      0 Nov  2 09:28 access.log
+-rw-r----- 1 www-data adm  10105 Nov  2 09:26 access.log.1
+-rw-r----- 1 www-data adm      0 Nov  2 09:28 error.log
+-rw-r----- 1 www-data adm     76 Nov  2 09:07 error.log.1
+-rw-r----- 1 www-data adm      0 Nov  2 09:28 sysops.example.access.log
+-rw-r--r-- 1 root     root  1483 Nov  2 09:27 sysops.example.access.log.1
+sysops@web-01:~$ systemctl list-timers logrotate.timer --no-pager
+NEXT                        LEFT LAST PASSED UNIT            ACTIVATES
+Tue 2026-11-03 00:14:57 UTC  14h -         - logrotate.timer logrotate.service
+
+1 timers listed.
+Pass --all to see loaded but inactive timers, too.
+sysops@web-01:~$

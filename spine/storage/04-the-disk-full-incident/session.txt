@@ -1,0 +1,19 @@
+sysops@web-01:~$ sudo mkdir /srv/data/tmp
+[sudo] password for sysops:
+sysops@web-01:~$ sudo dd if=/dev/zero of=/srv/data/tmp/fill bs=1M status=none
+dd: error writing '/srv/data/tmp/fill': No space left on device
+sysops@web-01:~$ df -h /srv/data
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vdb1       2.0G  2.0G     0 100% /srv/data
+sysops@web-01:~$ echo hello | sudo tee /srv/data/note
+hello
+tee: /srv/data/note: No space left on device
+sysops@web-01:~$ sudo du -sh /srv/data/*
+16K     /srv/data/lost+found
+0       /srv/data/note
+2.0G    /srv/data/tmp
+sysops@web-01:~$ sudo rm /srv/data/tmp/fill
+sysops@web-01:~$ df -h /srv/data
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vdb1       2.0G  536K  1.9G   1% /srv/data
+sysops@web-01:~$

@@ -1,0 +1,26 @@
+{
+ "note": "9.3, branch (discarded): fill the data disk; the write that fails; df and du find it; removing it frees the space.",
+ "branch": true,
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  {
+   "cmd": "sudo mkdir /srv/data/tmp",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "sudo dd if=/dev/zero of=/srv/data/tmp/fill bs=1M status=none",
+  "df -h /srv/data",
+  "echo hello | sudo tee /srv/data/note",
+  "sudo du -sh /srv/data/*",
+  "sudo rm /srv/data/tmp/fill",
+  "df -h /srv/data"
+ ]
+}

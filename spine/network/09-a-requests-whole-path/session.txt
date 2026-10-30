@@ -8,7 +8,7 @@ GET|Host)|^< HTTP'
 y
 * Server certificate:
 *  subject: CN=sysops.example
-*  expire date: Oct 30 19:10:03 2031 GMT
+*  expire date: Oct 30 19:57:35 2031 GMT
 *  subjectAltName: host "sysops.example" matched cert's "sysops.example"
 *  issuer: CN=Pebble Intermediate CA 3cdb95
 > GET / HTTP/1.1
@@ -21,7 +21,7 @@ ite'"
  "the site"
 Connection to web-01 closed.
 sysops@ops:~$ ssh web-01 tail -n 1 /var/log/nginx/sysops.example.access.log
-10.0.2.2 - - [02/Nov/2026:09:28:08 +0000] "GET / HTTP/1.1" 200 24 "-" "curl/8.5.
+10.0.2.2 - - [02/Nov/2026:09:27:08 +0000] "GET / HTTP/1.1" 200 24 "-" "curl/8.5.
 0"
 sysops@ops:~$ ssh web-01 cat /srv/sysops.example/index.html
 <h1>sysops.example</h1>

@@ -1,0 +1,25 @@
+{
+ "note": "9.4: nginx ships a logrotate rule, but Debian 13's cloud image has no logrotate: installed, forced, the files it leaves, its timer.",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "cat /etc/logrotate.d/nginx",
+  "ls /var/log/nginx",
+  {
+   "cmd": "sudo logrotate -f /etc/logrotate.d/nginx",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "sudo apt-get install -y -q logrotate > /dev/null",
+  "sudo logrotate -f /etc/logrotate.d/nginx",
+  "ls -l /var/log/nginx",
+  "systemctl list-timers logrotate.timer --no-pager"
+ ]
+}

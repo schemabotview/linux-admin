@@ -1,0 +1,27 @@
+{
+ "note": "9.2: mount it, see it in the tree, make it permanent by UUID in fstab (nofail), test with mount -a.",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  {
+   "cmd": "sudo mkdir /srv/data",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "sudo mount /dev/vdb1 /srv/data",
+  "findmnt /srv/data",
+  "df -h / /srv/data",
+  "sudo blkid /dev/vdb1",
+  "echo \"UUID=$(sudo blkid -s UUID -o value /dev/vdb1) /srv/data ext4 defaults,nofail 0 2\" | sudo tee -a /etc/fstab",
+  "sudo umount /srv/data",
+  "sudo mount -a",
+  "findmnt /srv/data"
+ ]
+}

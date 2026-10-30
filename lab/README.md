@@ -43,6 +43,12 @@ A snapshot holds the VM's RAM (~0.5 GB): keeping all of them filled the 39 GB di
 `replay.py` keeps only `base` and each course's last step; replaying an earlier step rebuilds
 forward from the nearest kept snapshot (the steps in between should come back "same").
 
+## "changed" that is not a change
+
+A few steps not marked `volatile` still print a download speed (`Fetched … (1261 kB/s)`) or an HTTP
+`Date:`; a replay reports them "changed". Check with `git diff spine/` that only such values moved
+before believing a transcript changed. Scenes never read those values.
+
 ## Timings measured (TCG emulation, no KVM, 4 vCPU host)
 
 Base build ~4 min. Restore + ssh ~7 s. A course-2 step 22–42 s. Courses 1–2 (8 steps) ~4 min.

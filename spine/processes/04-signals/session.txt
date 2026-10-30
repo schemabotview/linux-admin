@@ -5,25 +5,25 @@ sysops@web-01:~$ kill -l TERM KILL STOP CONT HUP
 18
 1
 sysops@web-01:~$ sleep 1000 &
-[1] 1766
+[1] 1762
 sysops@web-01:~$ ps -o pid,stat,cmd -C sleep
     PID STAT CMD
-   1766 S    sleep 1000
+   1762 S    sleep 1000
 sysops@web-01:~$ kill %1
 sysops@web-01:~$ jobs
 [1]+  Terminated              sleep 1000
 sysops@web-01:~$ sleep 1000 &
-[1] 1768
+[1] 1764
 sysops@web-01:~$ kill -STOP %1
 sysops@web-01:~$ ps -o pid,stat,cmd -C sleep
     PID STAT CMD
-   1768 T    sleep 1000
+   1764 T    sleep 1000
 
 [1]+  Stopped                 sleep 1000
 sysops@web-01:~$ kill -CONT %1
 sysops@web-01:~$ ps -o pid,stat,cmd -C sleep
     PID STAT CMD
-   1768 S    sleep 1000
+   1764 S    sleep 1000
 sysops@web-01:~$ kill -KILL %1
 sysops@web-01:~$ jobs
 [1]+  Killed                  sleep 1000

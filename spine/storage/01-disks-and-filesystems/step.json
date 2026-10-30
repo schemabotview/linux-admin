@@ -1,0 +1,23 @@
+{
+ "note": "9.1: the disks (vda the system, vdb new and empty), a partition, a filesystem.",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "lsblk",
+  {
+   "cmd": "sudo sfdisk -l /dev/vdb",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "echo 'type=linux' | sudo sfdisk --quiet /dev/vdb",
+  "lsblk /dev/vdb",
+  "sudo mkfs.ext4 -q -L data /dev/vdb1",
+  "lsblk -f /dev/vda /dev/vdb"
+ ]
+}

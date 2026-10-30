@@ -20,9 +20,9 @@ sysops@web-01:~$ systemctl status report --no-pager
      Loaded: loaded (/etc/systemd/system/report.service; static)
      Active: inactive (dead)
 
-Nov 02 09:19:49 web-01 systemd[1]: Starting report.service - Count the site…e...
-Nov 02 09:19:50 web-01 systemd[1]: report.service: Deactivated successfully.
-Nov 02 09:19:50 web-01 systemd[1]: Finished report.service - Count the site…ode.
+Nov 02 09:19:16 web-01 systemd[1]: Starting report.service - Count the site…e...
+Nov 02 09:19:16 web-01 systemd[1]: report.service: Deactivated successfully.
+Nov 02 09:19:16 web-01 systemd[1]: Finished report.service - Count the site…ode.
 Hint: Some lines were ellipsized, use -l to show in full.
 sysops@web-01:~$ cat /srv/sysops.example/status.txt
       5 200

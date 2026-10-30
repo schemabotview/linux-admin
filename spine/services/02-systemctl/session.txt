@@ -2,31 +2,31 @@ sysops@web-01:~$ systemctl status nginx --no-pager
 ● nginx.service - A high performance web server and a reverse proxy server
      Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: ena
 bled)
-     Active: active (running) since Mon 2026-11-02 09:17:26 UTC; 27s ago
- Invocation: 76e46f817949480780c5c011497e33cf
+     Active: active (running) since Mon 2026-11-02 09:16:59 UTC; 25s ago
+ Invocation: 4e2a5786c1214e4f855558b175ff287e
        Docs: man:nginx(8)
-    Process: 576 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_process
+    Process: 575 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_process
  on; (code=exited, status=0/SUCCESS)
-    Process: 587 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (cod
+    Process: 585 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (cod
 e=exited, status=0/SUCCESS)
-   Main PID: 600 (nginx)
+   Main PID: 604 (nginx)
       Tasks: 3 (limit: 2337)
-     Memory: 4.3M (peak: 4.7M)
-        CPU: 1.032s
+     Memory: 4.3M (peak: 4.6M)
+        CPU: 1.238s
      CGroup: /system.slice/nginx.service
-             ├─600 "nginx: master process /usr/sbin/nginx -g daemon on; master_…
-             ├─601 "nginx: worker process"
-             └─602 "nginx: worker process"
+             ├─604 "nginx: master process /usr/sbin/nginx -g daemon on; master_…
+             ├─606 "nginx: worker process"
+             └─608 "nginx: worker process"
 
-Nov 02 09:17:23 web-01 systemd[1]: Starting nginx.service - A high performa…r...
-Nov 02 09:17:26 web-01 systemd[1]: Started nginx.service - A high performan…ver.
+Nov 02 09:16:55 web-01 systemd[1]: Starting nginx.service - A high performa…r...
+Nov 02 09:16:59 web-01 systemd[1]: Started nginx.service - A high performan…ver.
 Hint: Some lines were ellipsized, use -l to show in full.
 sysops@web-01:~$ sudo systemctl stop nginx
 [sudo] password for sysops:
 sysops@web-01:~$ systemctl is-active nginx
 inactive
 sysops@web-01:~$ curl -sS -I localhost
-curl: (7) Failed to connect to localhost port 80 after 53 ms: Could not connect
+curl: (7) Failed to connect to localhost port 80 after 48 ms: Could not connect
 to server
 sysops@web-01:~$ sudo systemctl start nginx
 sysops@web-01:~$ systemctl is-active nginx

@@ -1,0 +1,26 @@
+{
+ "note": "9.6: tar for an archive, rsync for a mirror (and how little its second run copies).",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  {
+   "cmd": "sudo install -d -o sysops -g site /srv/data/backups /srv/data/mirror",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "tar -czf /srv/data/backups/site.tar.gz -C /srv sysops.example",
+  "tar -tzvf /srv/data/backups/site.tar.gz",
+  "sudo apt-get install -y -q rsync > /dev/null",
+  "rsync -a --delete --itemize-changes /srv/sysops.example/ /srv/data/mirror/",
+  "echo '<p>updated</p>' >> /srv/sysops.example/index.html",
+  "rsync -a --delete --itemize-changes /srv/sysops.example/ /srv/data/mirror/",
+  "ls -l /srv/data/mirror"
+ ]
+}

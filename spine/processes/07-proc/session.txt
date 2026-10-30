@@ -2,22 +2,22 @@ sysops@web-01:~$ head -n 9 /proc/$$/status
 Name:   bash
 Umask:  0002
 State:  S (sleeping)
-Tgid:   1824
+Tgid:   1821
 Ngid:   0
-Pid:    1824
-PPid:   1823
+Pid:    1821
+PPid:   1820
 TracerPid:      0
 Uid:    1000    1000    1000    1000
 sysops@web-01:~$ ls -l /proc/$$/cwd
-lrwxrwxrwx 1 sysops sysops 0 Nov  2 09:15 /proc/1824/cwd -> /home/sysops
+lrwxrwxrwx 1 sysops sysops 0 Nov  2 09:15 /proc/1821/cwd -> /home/sysops
 sysops@web-01:~$ tr '\0' ' ' < /proc/$$/cmdline; echo
 -bash
 sysops@web-01:~$ cat /proc/loadavg
-0.53 0.62 0.53 1/102 1834
+0.47 0.73 0.66 1/104 1831
 sysops@web-01:~$ head -n 3 /proc/meminfo
 MemTotal:        2020544 kB
-MemFree:         1577248 kB
-MemAvailable:    1784680 kB
+MemFree:         1584664 kB
+MemAvailable:    1791256 kB
 sysops@web-01:~$ cat /proc/uptime
-790.19 1021.15
+796.43 1034.59
 sysops@web-01:~$

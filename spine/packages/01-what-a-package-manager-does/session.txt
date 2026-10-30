@@ -30,7 +30,7 @@ Get:8 http://snapshot.debian.org/archive/debian-security/20261026T000000Z trixie
 -security/main amd64 Packages [270 kB]
 Get:9 http://snapshot.debian.org/archive/debian-security/20261026T000000Z trixie
 -security/main Translation-en [166 kB]
-Fetched 16.8 MB in 11s (1485 kB/s)
+Fetched 16.8 MB in 13s (1261 kB/s)
 All packages are up to date.
 sysops@web-01:~$ apt-cache policy nginx
 nginx:

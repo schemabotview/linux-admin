@@ -20,6 +20,6 @@ sysops@web-01:~$ sudo ln -s /etc/nginx/sites-available/sysops.example /etc/nginx
 sysops@web-01:~$ sudo rm /etc/nginx/sites-enabled/default
 sysops@web-01:~$ ls -l /etc/nginx/sites-enabled
 total 0
-lrwxrwxrwx 1 root root 41 Nov  2 09:18 sysops.example -> /etc/nginx/sites-availa
+lrwxrwxrwx 1 root root 41 Nov  2 09:17 sysops.example -> /etc/nginx/sites-availa
 ble/sysops.example
 sysops@web-01:~$

@@ -11,7 +11,7 @@ User sysops may run the following commands on web-01:
 sysops@web-01:~$ sudo ls /etc/sudoers.d
 90-cloud-init-users  README
 sysops@web-01:~$ sudo cat /etc/sudoers.d/90-cloud-init-users
-# Created by cloud-init v. 25.1.4 on Mon, 02 Nov 2026 09:01:41 +0000
+# Created by cloud-init v. 25.1.4 on Mon, 02 Nov 2026 09:01:26 +0000
 
 # User rules for sysops
 sysops ALL=(ALL) ALL

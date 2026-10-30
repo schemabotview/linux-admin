@@ -20,7 +20,7 @@ Get:2 http://snapshot.debian.org/archive/debian/20261026T000000Z trixie/main amd
 64 libnftables1 amd64 1.1.3-1 [332 kB]
 Get:3 http://snapshot.debian.org/archive/debian/20261026T000000Z trixie/main amd
 64 nftables amd64 1.1.3-1 [75.9 kB]
-Fetched 448 kB in 0s (1157 kB/s)
+Fetched 448 kB in 0s (1132 kB/s)
 Selecting previously unselected package libjansson4:amd64.
 (Reading database ... 20681 files and directories currently installed.)
 Preparing to unpack .../libjansson4_2.14-2+b3_amd64.deb ...

@@ -1,11 +1,11 @@
 sysops@web-01:~$ echo $$
-1696
+1693
 sysops@web-01:~$ bash -c 'echo child $$ parent $PPID'
-child 1703 parent 1696
+child 1700 parent 1693
 sysops@web-01:~$ ps -o pid,ppid,comm
     PID    PPID COMMAND
-   1696    1695 bash
-   1704    1696 ps
+   1693    1692 bash
+   1701    1693 ps
 sysops@web-01:~$ ls -l /proc/$$/exe
-lrwxrwxrwx 1 sysops sysops 0 Nov  2 09:14 /proc/1696/exe -> /usr/bin/bash
+lrwxrwxrwx 1 sysops sysops 0 Nov  2 09:13 /proc/1693/exe -> /usr/bin/bash
 sysops@web-01:~$

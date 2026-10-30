@@ -1,0 +1,20 @@
+sysops@web-01:~$ ls -i notes.txt
+25056 notes.txt
+sysops@web-01:~$ ln notes.txt notes-hard.txt
+sysops@web-01:~$ ln -s notes.txt notes-link
+sysops@web-01:~$ ls -li notes*
+25056 -rw-r--r-- 2 sysops sysops 51 Nov  2 09:11 notes-hard.txt
+   81 lrwxrwxrwx 1 sysops sysops  9 Nov  2 09:29 notes-link -> notes.txt
+25056 -rw-r--r-- 2 sysops sysops 51 Nov  2 09:11 notes.txt
+sysops@web-01:~$ rm notes.txt
+sysops@web-01:~$ cat notes-hard.txt
+web-01: nginx installed, serving the default page.
+sysops@web-01:~$ cat notes-link
+cat: notes-link: No such file or directory
+sysops@web-01:~$ ls -l notes-link
+lrwxrwxrwx 1 sysops sysops 9 Nov  2 09:29 notes-link -> notes.txt
+sysops@web-01:~$ mv notes-hard.txt notes.txt
+sysops@web-01:~$ cat notes-link
+web-01: nginx installed, serving the default page.
+sysops@web-01:~$ rm notes-link
+sysops@web-01:~$

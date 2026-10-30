@@ -20,10 +20,11 @@ export function read(session: string, pattern: RegExp): string {
 
 /** The output of one command: the rows after the prompt row(s) that end with `command`, up to the next
  *  prompt. A command row exactly 80 wide WRAPPED (graphl-flow's console rule), so it is joined with the
- *  rows that continue it before comparing. */
-export function outputOf(session: string, command: string): string {
+ *  rows that continue it before comparing. `nth` picks among repeated runs (1 first, -1 last). */
+export function outputOf(session: string, command: string, nth = 1): string {
   const rows = session.split('\n')
   const prompt = /^\S+@\S+:.*?[$#]( |$)/
+  const found: string[] = []
   for (let i = 0; i < rows.length; i++) {
     if (!prompt.test(rows[i])) continue
     let line = rows[i], j = i
@@ -31,7 +32,10 @@ export function outputOf(session: string, command: string): string {
     // the command EXACTLY, right after the prompt: `bash -c '…'` must not match `X=1 bash -c '…'`
     if (!line.endsWith(`$ ${command}`) && !line.endsWith(`# ${command}`)) continue
     const end = rows.findIndex((r, k) => k > j && prompt.test(r))
-    return rows.slice(j + 1, end < 0 ? undefined : end).join('\n')
+    found.push(rows.slice(j + 1, end < 0 ? undefined : end).join('\n'))
   }
-  throw new Error(`the transcript never runs ${JSON.stringify(command)}`)
+  // nth: 1 = the first run of the command, -1 = the last (a command run twice is two outputs)
+  const out = nth < 0 ? found[found.length + nth] : found[nth - 1]
+  if (out === undefined) throw new Error(`the transcript never runs ${JSON.stringify(command)}${nth !== 1 ? ` (occurrence ${nth})` : ''}`)
+  return out
 }

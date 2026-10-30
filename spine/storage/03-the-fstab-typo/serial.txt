@@ -1,0 +1,22 @@
+         Starting systemd-tmpfiles-setup.se…ate System Files and Directories...
+         Mounting proc-sys-fs-binfmt_misc.m…cutable File Formats File System...
+[  OK  ] Finished systemd-tmpfiles-setup.se…reate System Files and Directories.
+[  OK  ] Mounted proc-sys-fs-binfmt_misc.mo…xecutable File Formats File System.
+[  OK  ] Finished systemd-binfmt.service - Set Up Additional Binary Formats.
+[  123.822010] audit: type=1400 audit(1793611839.372:2): apparmor="STATUS" operation="profile_load" profile="unconfined" name="Discord" pid=478 comm="apparmor_parser"
+[  123.830208] audit: type=1400 audit(1793611839.384:3): apparmor="STATUS" operation="profile_load" profile="unconfined" name="1password" pid=477 comm="apparmor_parser"
+[  123.856462] audit: type=1400 audit(1793611839.408:4): apparmor="STATUS" operation="profile_load" profile="unconfined" name=4D6F6E676F444220436F6D70617373 pid=482 comm="apparmor_parser"
+[  123.867386] audit: type=1400 audit(1793611839.420:5): apparmor="STATUS" operation="profile_load" profile="unconfined" name="QtWebEngineProcess" pid=483 comm="apparmor_parser"
+[  123.894078] audit: type=1400 audit(1793611839.448:6): apparmor="STATUS" operation="profile_load" profile="unconfined" name="balena-etcher" pid=485 comm="apparmor_parser"
+[  123.921635] audit: type=1400 audit(1793611839.472:7): apparmor="STATUS" operation="profile_load" profile="unconfined" name="brave" pid=486 comm="apparmor_parser"
+[  123.943080] audit: type=1400 audit(1793611839.496:8): apparmor="STATUS" operation="profile_load" profile="unconfined" name="buildah" pid=487 comm="apparmor_parser"
+[  123.944097] audit: type=1400 audit(1793611839.496:9): apparmor="STATUS" operation="profile_load" profile="unconfined" name="Xorg" pid=484 comm="apparmor_parser"
+[  123.964444] audit: type=1400 audit(1793611839.516:10): apparmor="STATUS" operation="profile_load" profile="unconfined" name="busybox" pid=488 comm="apparmor_parser"
+[  123.971764] audit: type=1400 audit(1793611839.524:11): apparmor="STATUS" operation="profile_load" profile="unconfined" name="cam" pid=489 comm="apparmor_parser"
+[  OK  ] Finished apparmor.service - Load AppArmor profiles.
+You are in emergency mode. After logging in, type "journalctl -xb" to view
+system logs, "systemctl reboot" to reboot, or "exit"
+to continue bootup.
+Cannot open access to console, the root account is locked.
+See sulogin(8) man page for more details.
+Press Enter to continue.

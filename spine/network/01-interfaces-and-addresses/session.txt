@@ -9,12 +9,12 @@ default via 10.0.2.2 dev enp0s2 proto dhcp src 10.0.2.15 metric 100
 10.0.2.3 dev enp0s2 proto dhcp scope link src 10.0.2.15 metric 100
 sysops@web-01:~$ ping -c 2 10.0.2.2
 PING 10.0.2.2 (10.0.2.2) 56(84) bytes of data.
-64 bytes from 10.0.2.2: icmp_seq=1 ttl=255 time=6.65 ms
-64 bytes from 10.0.2.2: icmp_seq=2 ttl=255 time=0.917 ms
+64 bytes from 10.0.2.2: icmp_seq=1 ttl=255 time=3.38 ms
+64 bytes from 10.0.2.2: icmp_seq=2 ttl=255 time=0.761 ms
 
 --- 10.0.2.2 ping statistics ---
-2 packets transmitted, 2 received, 0% packet loss, time 1005ms
-rtt min/avg/max/mdev = 0.917/3.782/6.648/2.865 ms
+2 packets transmitted, 2 received, 0% packet loss, time 1004ms
+rtt min/avg/max/mdev = 0.761/2.072/3.383/1.311 ms
 sysops@web-01:~$ sudo cat /etc/netplan/50-cloud-init.yaml
 [sudo] password for sysops:
 network:

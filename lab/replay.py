@@ -5,7 +5,8 @@
     python3 lab/replay.py --check          no VM: fail if any step is stale or has no transcript
 
 A step is `spine/<course>/<NN-id>/step.json`; its snapshot tag is `<course>-<NN>`. `"upload":
-{"lab/file": "/remote/path"}` copies lab files into the VM before the session (hidden setup). Replaying a step
+{"lab/file": "/remote/path"}` copies lab files into the VM before the session (hidden setup);
+`"serial": N` saves the last N lines of the VM's serial console as `serial.txt` (a failed boot). Replaying a step
 restores its PARENT's snapshot (the previous non-branch step, or `base`), runs the session in the
 `ops` console, writes `session.txt` (+ `tty/<name>.json` for each grab), and saves its own snapshot.
 A `"branch": true` step (one that breaks the machine) is run and then discarded: it saves nothing,
@@ -46,7 +47,10 @@ def steps() -> list[dict]:
             # an uploaded file is part of the step: editing it makes the step stale
             raw = (s / 'step.json').read_bytes() + b''.join((ROOT / src).read_bytes() for src in spec.get('upload', {}))
             out.append({'dir': s, 'tag': f'{course}-{s.name[:2]}', 'spec': spec, 'raw': raw})
-    parent, key = 'base', hashlib.sha256(b'web-01 base').hexdigest()
+    # the base is part of the chain: its seed and the VM's devices (a second disk changed every snapshot)
+    from vm import HOSTS
+    base = (ROOT / 'lab' / 'seed' / 'user-data').read_bytes() + json.dumps(HOSTS, sort_keys=True).encode()
+    parent, key = 'base', hashlib.sha256(b'web-01 base' + base).hexdigest()
     for s in out:
         s['parent'] = parent
         s['key'] = hashlib.sha256(key.encode() + s['raw']).hexdigest()
@@ -125,6 +129,10 @@ def replay(only: str | None) -> int:
             con.run(s['spec']['session'], grabs)
             text = con.transcript()
             con.close()
+            if 'serial' in s['spec']:  # the VM's own console (what a provider's console shows), e.g. after a failed boot
+                log = (vm.disk.parent / 'web-01.console.log').read_bytes().decode('utf-8', 'replace')
+                clean = [re.sub(r'\x1b\[[0-9;?]*[A-Za-z]', '', l).replace('\r', '').rstrip() for l in log.split('\n')]
+                (s['dir'] / 'serial.txt').write_text('\n'.join([l for l in clean if l][-s['spec']['serial']:]) + '\n')
             old = (s['dir'] / 'session.txt').read_text() if (s['dir'] / 'session.txt').exists() else None
             cmp = mask if s['spec'].get('volatile') else (lambda x: x)
             changed = old is None or cmp(old) != cmp(text)

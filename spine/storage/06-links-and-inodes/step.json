@@ -1,0 +1,23 @@
+{
+ "note": "9.5: names and inodes: a hard link is a second name, a symbolic link a pointer by name.",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "ls -i notes.txt",
+  "ln notes.txt notes-hard.txt",
+  "ln -s notes.txt notes-link",
+  "ls -li notes*",
+  "rm notes.txt",
+  "cat notes-hard.txt",
+  "cat notes-link",
+  "ls -l notes-link",
+  "mv notes-hard.txt notes.txt",
+  "cat notes-link",
+  "rm notes-link"
+ ]
+}

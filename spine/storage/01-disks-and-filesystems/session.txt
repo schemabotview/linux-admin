@@ -1,0 +1,35 @@
+sysops@web-01:~$ lsblk
+NAME    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+sr0      11:0    1  368K  1 rom
+vda     254:0    0    8G  0 disk
+├─vda1  254:1    0  7.9G  0 part /
+├─vda14 254:14   0    3M  0 part
+└─vda15 254:15   0  124M  0 part /boot/efi
+vdb     254:16   0    2G  0 disk
+sysops@web-01:~$ sudo sfdisk -l /dev/vdb
+[sudo] password for sysops:
+Disk /dev/vdb: 2 GiB, 2147483648 bytes, 4194304 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+sysops@web-01:~$ echo 'type=linux' | sudo sfdisk --quiet /dev/vdb
+sysops@web-01:~$ lsblk /dev/vdb
+NAME   MAJ:MIN RM SIZE RO TYPE MOUNTPOINTS
+vdb    254:16   0   2G  0 disk
+└─vdb1 254:17   0   2G  0 part
+sysops@web-01:~$ sudo mkfs.ext4 -q -L data /dev/vdb1
+sysops@web-01:~$ lsblk -f /dev/vda /dev/vdb
+NAME FSTYPE FSVER LABEL UUID                                 FSAVAIL FSUSE% MOUN
+TPOINTS
+vda
+├─vda1
+│    ext4   1.0         21e75815-f685-4684-ae0b-1f2e42283c97    6.5G    11% /
+├─vda14
+│
+└─vda15
+     vfat   FAT16       D7D8-B181                             114.8M     7% /boo
+t/efi
+vdb
+└─vdb1
+     ext4   1.0   data  8fa03ca0-6122-4d1b-8dc2-41509287ecb9
+sysops@web-01:~$

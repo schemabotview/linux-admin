@@ -1,39 +1,39 @@
 sysops@web-01:~$ journalctl -u nginx --no-pager | tail -n 12
-Nov 02 09:18:53 web-01 systemd[1]: Stopping nginx.service - A high performance w
+Nov 02 09:18:21 web-01 systemd[1]: Stopping nginx.service - A high performance w
 eb server and a reverse proxy server...
-Nov 02 09:18:53 web-01 systemd[1]: nginx.service: Deactivated successfully.
-Nov 02 09:18:53 web-01 systemd[1]: Stopped nginx.service - A high performance we
+Nov 02 09:18:22 web-01 systemd[1]: nginx.service: Deactivated successfully.
+Nov 02 09:18:22 web-01 systemd[1]: Stopped nginx.service - A high performance we
 b server and a reverse proxy server.
-Nov 02 09:18:53 web-01 systemd[1]: nginx.service: Consumed 2.163s CPU time, 5.5M
+Nov 02 09:18:22 web-01 systemd[1]: nginx.service: Consumed 2.136s CPU time, 5.3M
  memory peak.
-Nov 02 09:18:53 web-01 systemd[1]: Starting nginx.service - A high performance w
+Nov 02 09:18:22 web-01 systemd[1]: Starting nginx.service - A high performance w
 eb server and a reverse proxy server...
-Nov 02 09:18:54 web-01 nginx[823]: 2026/11/02 09:18:54 [emerg] 823#823: invalid
+Nov 02 09:18:22 web-01 nginx[822]: 2026/11/02 09:18:22 [emerg] 822#822: invalid
 number of arguments in "root" directive in /etc/nginx/sites-enabled/sysops.examp
 le:6
-Nov 02 09:18:54 web-01 nginx[823]: nginx: configuration file /etc/nginx/nginx.co
+Nov 02 09:18:22 web-01 nginx[822]: nginx: configuration file /etc/nginx/nginx.co
 nf test failed
-Nov 02 09:18:54 web-01 systemd[1]: nginx.service: Control process exited, code=e
+Nov 02 09:18:22 web-01 systemd[1]: nginx.service: Control process exited, code=e
 xited, status=1/FAILURE
-Nov 02 09:18:54 web-01 systemd[1]: nginx.service: Failed with result 'exit-code'
+Nov 02 09:18:22 web-01 systemd[1]: nginx.service: Failed with result 'exit-code'
 .
-Nov 02 09:18:54 web-01 systemd[1]: Failed to start nginx.service - A high perfor
+Nov 02 09:18:22 web-01 systemd[1]: Failed to start nginx.service - A high perfor
 mance web server and a reverse proxy server.
-Nov 02 09:19:03 web-01 systemd[1]: Starting nginx.service - A high performance w
+Nov 02 09:18:31 web-01 systemd[1]: Starting nginx.service - A high performance w
 eb server and a reverse proxy server...
-Nov 02 09:19:05 web-01 systemd[1]: Started nginx.service - A high performance we
+Nov 02 09:18:33 web-01 systemd[1]: Started nginx.service - A high performance we
 b server and a reverse proxy server.
 sysops@web-01:~$ journalctl -u nginx -p err --no-pager | tail -n 4
-Nov 02 09:18:54 web-01 systemd[1]: Failed to start nginx.service - A high perfor
+Nov 02 09:18:22 web-01 systemd[1]: Failed to start nginx.service - A high perfor
 mance web server and a reverse proxy server.
 sysops@web-01:~$ journalctl _COMM=sudo --no-pager | tail -n 4
-Nov 02 09:19:01 web-01 sudo[832]: pam_unix(sudo:session): session closed for use
+Nov 02 09:18:29 web-01 sudo[830]: pam_unix(sudo:session): session closed for use
 r root
-Nov 02 09:19:03 web-01 sudo[836]:   sysops : TTY=pts/0 ; PWD=/home/sysops ; USER
+Nov 02 09:18:31 web-01 sudo[834]:   sysops : TTY=pts/0 ; PWD=/home/sysops ; USER
 =root ; COMMAND=/usr/bin/systemctl start nginx
-Nov 02 09:19:03 web-01 sudo[836]: pam_unix(sudo:session): session opened for use
+Nov 02 09:18:31 web-01 sudo[834]: pam_unix(sudo:session): session opened for use
 r root(uid=0) by sysops(uid=1000)
-Nov 02 09:19:05 web-01 sudo[836]: pam_unix(sudo:session): session closed for use
+Nov 02 09:18:33 web-01 sudo[834]: pam_unix(sudo:session): session closed for use
 r root
 sysops@web-01:~$ journalctl --disk-usage
 Archived and active journals take up 16M in the file system.

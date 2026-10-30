@@ -1,0 +1,12 @@
+sysops@web-01:~$ sudo sed -i 's|^UUID=[^ ]*\( /srv/data .*\),nofail|UUID=0000000
+0-0000-0000-0000-000000000000\1|' /etc/fstab
+[sudo] password for sysops:
+sysops@web-01:~$ tail -n 1 /etc/fstab
+UUID=00000000-0000-0000-0000-000000000000 /srv/data ext4 defaults 0 2
+sysops@web-01:~$ sudo systemctl reboot
+sysops@web-01:~$ Connection to web-01 closed by remote host.
+Connection to web-01 closed.
+sysops@ops:~$ sleep 200; ssh -o ConnectTimeout=15 web-01
+kex_exchange_identification: read: Connection reset by peer
+Connection reset by 127.0.0.11 port 22
+sysops@ops:~$

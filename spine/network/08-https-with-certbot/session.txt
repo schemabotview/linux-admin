@@ -44,7 +44,7 @@ Get:12 http://snapshot.debian.org/archive/debian/20261026T000000Z trixie/main am
 d64 python3-certbot-nginx all 4.0.0-2 [65.7 kB]
 Get:13 http://snapshot.debian.org/archive/debian/20261026T000000Z trixie/main am
 d64 python3-icu amd64 2.14-1+b3 [516 kB]
-Fetched 11.2 MB in 1s (9444 kB/s)
+Fetched 11.2 MB in 1s (10.4 MB/s)
 Preconfiguring packages ...
 Selecting previously unselected package python3-openssl.
 (Reading database ... 20736 files and directories currently installed.)
@@ -139,10 +139,10 @@ Saving debug log to /var/log/letsencrypt/letsencrypt.log
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Found the following certs:
   Certificate Name: sysops.example
-    Serial Number: 7585d00b426e061f
+    Serial Number: 41130fd42b0b2527
     Key Type: ECDSA
     Domains: sysops.example
-    Expiry Date: 2031-10-30 19:10:03+00:00 (VALID: 1823 days)
+    Expiry Date: 2031-10-30 19:57:35+00:00 (VALID: 1823 days)
     Certificate Path: /etc/letsencrypt/live/sysops.example/fullchain.pem
     Private Key Path: /etc/letsencrypt/live/sysops.example/privkey.pem
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

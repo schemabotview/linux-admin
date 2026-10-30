@@ -1,0 +1,26 @@
+sysops@web-01:~$ sudo install -d -o sysops -g site /srv/data/backups /srv/data/m
+irror
+[sudo] password for sysops:
+sysops@web-01:~$ tar -czf /srv/data/backups/site.tar.gz -C /srv sysops.example
+sysops@web-01:~$ tar -tzvf /srv/data/backups/site.tar.gz
+drwxrwsr-x root/site         0 2026-11-02 09:19 sysops.example/
+-rw-r--r-- deploy/site      24 2026-11-02 09:19 sysops.example/status.txt
+-rw-r--r-- sysops/site       0 2026-11-02 09:13 sysops.example/about.html
+-rw-rw-r-- sysops/site      24 2026-11-02 09:17 sysops.example/index.html
+sysops@web-01:~$ sudo apt-get install -y -q rsync > /dev/null
+sysops@web-01:~$ rsync -a --delete --itemize-changes /srv/sysops.example/ /srv/d
+ata/mirror/
+.d..tp..... ./
+>f+++++++++ about.html
+>f+++++++++ index.html
+>f+++++++++ status.txt
+sysops@web-01:~$ echo '<p>updated</p>' >> /srv/sysops.example/index.html
+sysops@web-01:~$ rsync -a --delete --itemize-changes /srv/sysops.example/ /srv/d
+ata/mirror/
+>f.st...... index.html
+sysops@web-01:~$ ls -l /srv/data/mirror
+total 8
+-rw-r--r-- 1 sysops site  0 Nov  2 09:13 about.html
+-rw-rw-r-- 1 sysops site 39 Nov  2 09:30 index.html
+-rw-r--r-- 1 sysops site 24 Nov  2 09:19 status.txt
+sysops@web-01:~$

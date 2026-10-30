@@ -8,7 +8,7 @@ sysops@web-01:~$ curl -s localhost
 sysops@web-01:~$ sudo sed -i 's|root /srv/sysops.example;|root /srv/sysops.examp
 le|' /etc/nginx/sites-available/sysops.example
 sysops@web-01:~$ sudo nginx -t
-2026/11/02 09:18:51 [emerg] 815#815: invalid number of arguments in "root" direc
+2026/11/02 09:18:19 [emerg] 814#814: invalid number of arguments in "root" direc
 tive in /etc/nginx/sites-enabled/sysops.example:6
 nginx: configuration file /etc/nginx/nginx.conf test failed
 sysops@web-01:~$ sudo systemctl restart nginx
