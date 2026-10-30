@@ -1,0 +1,29 @@
+{
+ "note": "5.5: what sudo allows (sudo -l), the rule that says so, the cached password, and its expiry.",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  {
+   "cmd": "sudo -l",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "sudo ls /etc/sudoers.d",
+  "sudo cat /etc/sudoers.d/90-cloud-init-users",
+  "sudo whoami",
+  "sudo -k",
+  {
+   "cmd": "sudo whoami",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  }
+ ]
+}

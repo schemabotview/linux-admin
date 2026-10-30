@@ -1,0 +1,26 @@
+{
+ "note": "5.3: chmod in letters and numbers, stat, chown, and a write refused by ownership.",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "chmod 600 notes.txt",
+  "ls -l notes.txt",
+  "chmod go+r notes.txt",
+  "stat -c '%a %A %U:%G %n' notes.txt",
+  {
+   "cmd": "sudo chown root notes.txt",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "ls -l notes.txt",
+  "echo 'one more line' >> notes.txt",
+  "sudo chown sysops notes.txt",
+  "ls -l notes.txt"
+ ]
+}

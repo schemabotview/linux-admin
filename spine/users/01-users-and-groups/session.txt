@@ -1,0 +1,13 @@
+sysops@web-01:~$ id
+uid=1000(sysops) gid=1000(sysops) groups=1000(sysops),4(adm)
+sysops@web-01:~$ id www-data
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+sysops@web-01:~$ getent passwd sysops www-data
+sysops:x:1000:1000:Sysops team:/home/sysops:/bin/bash
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+sysops@web-01:~$ getent group adm sudo
+adm:x:4:sysops
+sudo:x:27:
+sysops@web-01:~$ groups
+sysops adm
+sysops@web-01:~$

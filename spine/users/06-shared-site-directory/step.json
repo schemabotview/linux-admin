@@ -1,0 +1,42 @@
+{
+ "note": "5.6: the team's /srv/sysops.example: a group, setgid, a new login for new groups; umask 0002 (Debian 13's default) vs 022.",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  {
+   "cmd": "sudo groupadd site",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "sudo useradd --system --shell /usr/sbin/nologin --gid site deploy",
+  "sudo usermod -aG site sysops",
+  "sudo mkdir /srv/sysops.example",
+  "sudo chown root:site /srv/sysops.example",
+  "sudo chmod 2775 /srv/sysops.example",
+  "ls -ld /srv/sysops.example",
+  "touch /srv/sysops.example/index.html",
+  "id",
+  {
+   "cmd": "exit",
+   "wait": "sysops@ops:~\\$ $"
+  },
+  {
+   "cmd": "ssh web-01",
+   "wait": "sysops@web-01:~\\$ $"
+  },
+  "id",
+  "umask",
+  "touch /srv/sysops.example/index.html",
+  "umask 022",
+  "touch /srv/sysops.example/about.html",
+  "ls -l /srv/sysops.example",
+  "id deploy"
+ ]
+}

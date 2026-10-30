@@ -1,0 +1,15 @@
+{
+ "note": "5.2: rwx read off ls -l, for a file of ours, a secret file, and a home directory.",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "ls -l notes.txt",
+  "ls -l /etc/shadow",
+  "cat /etc/shadow",
+  "ls -ld /home/sysops /tmp"
+ ]
+}

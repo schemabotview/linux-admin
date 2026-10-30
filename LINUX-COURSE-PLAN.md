@@ -1,6 +1,6 @@
 # Learn Linux administration by running a web server — plan
 
-**Status: v3 plan (2026-10-30): x86_64, one VM at a time, one vim section.** Courses 1–4 authored (spine captured, scenes, narration, checks); narration audio not generated yet.
+**Status: v3 plan (2026-10-30): x86_64, one VM at a time, one vim section.** Courses 1–5 authored (spine captured, scenes, narration, checks); narration audio not generated yet.
 
 ## The idea
 
@@ -29,7 +29,7 @@ fixtures are real captures from Debian 13 and Rocky 10.2 VMs.
 | --- | --- |
 | **Sysops team** | the people running the servers; the narration says "the team" |
 | `sysops` | the team's login on every machine (prompt `sysops@web-01:~$`) |
-| `sysops` (group) | the team; owns `/srv/sysops.example` (setgid, course 5) |
+| `site` (group) | the people who may edit the site: sysops and `deploy`; owns `/srv/sysops.example` (setgid, course 5). Not the `sysops` group, which is sysops's private group |
 | `deploy` | a service account added in course 5, used by the deploy script (course 10) |
 | `ops` | the team's workstation: where every session starts, `ssh web-01`. **Not a VM** — a shell on the lab host in its own UTS namespace (hostname `ops`), so it costs nothing |
 | `web-01` | Debian 13 "trixie", x86_64, the web server of courses 1–10 |
@@ -214,7 +214,7 @@ access log is the one the rest of the course keeps reading.
 | 3 | `chmod`, `chown`, octal | bits → number |
 | 4 | Directories: what `x` means | the path walk, a check at each directory |
 | 5 | `sudo` and root | who runs what; `/etc/sudoers.d/sysops` |
-| 6 | The team's `/srv/sysops.example`: setgid, umask; the `deploy` account | a new file's owner and mode, before/after |
+| 6 | The team's `/srv/sysops.example`: the `site` group, setgid, umask; the `deploy` account | a new file's owner and mode, before/after; new groups need a new login |
 
 **6. `processes` · What's running · 7**
 

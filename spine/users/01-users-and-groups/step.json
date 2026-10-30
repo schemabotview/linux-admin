@@ -1,0 +1,16 @@
+{
+ "note": "5.1: who you are (id), the account files, groups; adm is why sysops reads nginx's log.",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "id",
+  "id www-data",
+  "getent passwd sysops www-data",
+  "getent group adm sudo",
+  "groups"
+ ]
+}

@@ -1,0 +1,42 @@
+sysops@web-01:~$ sudo groupadd site
+[sudo] password for sysops:
+sysops@web-01:~$ sudo useradd --system --shell /usr/sbin/nologin --gid site depl
+oy
+sysops@web-01:~$ sudo usermod -aG site sysops
+sysops@web-01:~$ sudo mkdir /srv/sysops.example
+sysops@web-01:~$ sudo chown root:site /srv/sysops.example
+sysops@web-01:~$ sudo chmod 2775 /srv/sysops.example
+sysops@web-01:~$ ls -ld /srv/sysops.example
+drwxrwsr-x 2 root site 4096 Nov  2 09:13 /srv/sysops.example
+sysops@web-01:~$ touch /srv/sysops.example/index.html
+touch: cannot touch '/srv/sysops.example/index.html': Permission denied
+sysops@web-01:~$ id
+uid=1000(sysops) gid=1000(sysops) groups=1000(sysops),4(adm)
+sysops@web-01:~$ exit
+logout
+Connection to web-01 closed.
+sysops@ops:~$ ssh web-01
+Linux web-01 6.12.113+deb13-cloud-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.113-1
+ (2026-10-15) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Mon Nov  2 09:13:21 2026 from 10.0.2.2
+sysops@web-01:~$ id
+uid=1000(sysops) gid=1000(sysops) groups=1000(sysops),4(adm),1001(site)
+sysops@web-01:~$ umask
+0002
+sysops@web-01:~$ touch /srv/sysops.example/index.html
+sysops@web-01:~$ umask 022
+sysops@web-01:~$ touch /srv/sysops.example/about.html
+sysops@web-01:~$ ls -l /srv/sysops.example
+total 0
+-rw-r--r-- 1 sysops site 0 Nov  2 09:13 about.html
+-rw-rw-r-- 1 sysops site 0 Nov  2 09:13 index.html
+sysops@web-01:~$ id deploy
+uid=999(deploy) gid=1001(site) groups=1001(site)
+sysops@web-01:~$

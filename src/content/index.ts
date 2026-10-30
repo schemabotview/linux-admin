@@ -2,6 +2,7 @@ import { intro } from './intro'
 import { shell } from './shell'
 import { packages } from './packages'
 import { text } from './text'
+import { users } from './users'
 import type { Course, Section } from './types'
 
 // Course registry, in syllabus order (LINUX-COURSE-PLAN.md). A course is registered only once it is authored.
@@ -10,6 +11,7 @@ export const COURSES: Record<string, Course> = {
   [shell.id]: shell,
   [packages.id]: packages,
   [text.id]: text,
+  [users.id]: users,
 }
 
 export type { Course, Section }

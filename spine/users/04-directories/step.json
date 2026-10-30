@@ -1,0 +1,22 @@
+{
+ "note": "5.4: on a directory r lists names, x lets you in; a directory without x; the walk to ~/notes.txt.",
+ "volatile": true,
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "mkdir box",
+  "echo inside > box/file",
+  "chmod 600 box",
+  "ls -ld box",
+  "ls box",
+  "cat box/file",
+  "chmod 700 box",
+  "cat box/file",
+  "ls -ld / /home /home/sysops notes.txt",
+  "rm -r box"
+ ]
+}

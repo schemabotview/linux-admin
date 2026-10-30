@@ -1,0 +1,10 @@
+sysops@web-01:~$ ls -l notes.txt
+-rw-rw-r-- 1 sysops sysops 51 Nov  2 09:11 notes.txt
+sysops@web-01:~$ ls -l /etc/shadow
+-rw-r----- 1 root shadow 829 Nov  2 09:01 /etc/shadow
+sysops@web-01:~$ cat /etc/shadow
+cat: /etc/shadow: Permission denied
+sysops@web-01:~$ ls -ld /home/sysops /tmp
+drwx------ 4 sysops sysops 4096 Nov  2 09:11 /home/sysops
+drwxrwxrwt 8 root   root    160 Nov  2 09:09 /tmp
+sysops@web-01:~$
