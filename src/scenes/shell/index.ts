@@ -66,7 +66,7 @@ const commands = consoleFrame(
       ['ls --all', 'a long option: the same as -a'],
     ] },
     { type: 'table', id: 'long', title: `What -l adds: ${longRow.join(' ').replace(/ +/g, ' ')}`, tone: 'store', fill: true, columns: ['field', 'here', 'means'], rows: [
-      { id: 'mode', cells: ['type and permissions', longRow[0], 'a file (-); who may read and write it — course 4'] },
+      { id: 'mode', cells: ['type and permissions', longRow[0], 'a file (-); who may read and write it — course 5'] },
       { id: 'links', cells: ['links', longRow[1], 'names this file has'] },
       { id: 'owner', cells: ['owner, group', `${longRow[2]}, ${longRow[3]}`, 'who owns it'] },
       { id: 'size', cells: ['size', longRow[4], 'bytes: the name, plus a newline'] },
@@ -208,7 +208,7 @@ const files = consoleFrame(
 )
 
 // 2.7 — reading files: the whole, the ends, the count, and a pager for the long ones. The account
-// line is the real last row of /etc/passwd (course 4 comes back to it).
+// line is the real last row of /etc/passwd (course 5 comes back to it).
 const account = read(s7, /\n(sysops:[^\n]+)/).split(':')
 const reading = consoleFrame(ttyNode('less /var/log/README — web-01', lessReadme), [
   { type: 'code', id: 'short', console: true, filename: WEB, code: s7.split('\n').slice(0, rowOf(s7, 'less /var/log/README') - 1).join('\n') },

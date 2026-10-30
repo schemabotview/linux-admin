@@ -1,0 +1,21 @@
+{
+ "note": "3.4: installed vs candidate, what is upgradable, an upgrade with nothing to do on a pinned archive, manual vs automatic.",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "apt-cache policy nginx",
+  "apt list --upgradable",
+  {
+   "cmd": "sudo apt upgrade",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "apt-mark showmanual nginx nginx-common"
+ ]
+}

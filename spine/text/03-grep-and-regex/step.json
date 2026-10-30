@@ -1,0 +1,16 @@
+{
+ "note": "4.3: grep with patterns: fixed text, -E alternatives and classes, -c, -v, -o.",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "grep -c 'wp-login' /var/log/nginx/access.log",
+  "grep -c -E '\"GET /(wp-login\\.php|\\.env|admin) ' /var/log/nginx/access.log",
+  "grep -c -E '\" [45][0-9]{2} ' /var/log/nginx/access.log",
+  "grep -v -c 'Mozilla' /var/log/nginx/access.log",
+  "grep -o -E '^127\\.0\\.0\\.6[0-9]' /var/log/nginx/access.log | head -n 2"
+ ]
+}

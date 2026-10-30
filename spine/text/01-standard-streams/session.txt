@@ -1,0 +1,19 @@
+sysops@web-01:~$ ls /etc/hostname /nope
+ls: cannot access '/nope': No such file or directory
+/etc/hostname
+sysops@web-01:~$ ls /etc/hostname /nope > out.txt
+ls: cannot access '/nope': No such file or directory
+sysops@web-01:~$ cat out.txt
+/etc/hostname
+sysops@web-01:~$ ls /etc/hostname /nope 2> err.txt
+/etc/hostname
+sysops@web-01:~$ cat err.txt
+ls: cannot access '/nope': No such file or directory
+sysops@web-01:~$ ls -l /proc/self/fd
+total 0
+lrwx------ 1 sysops sysops 64 Nov  2 09:09 0 -> /dev/pts/0
+lrwx------ 1 sysops sysops 64 Nov  2 09:09 1 -> /dev/pts/0
+lrwx------ 1 sysops sysops 64 Nov  2 09:09 2 -> /dev/pts/0
+lr-x------ 1 sysops sysops 64 Nov  2 09:09 3 -> /proc/1323/fd
+sysops@web-01:~$ rm out.txt err.txt
+sysops@web-01:~$

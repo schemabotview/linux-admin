@@ -1,10 +1,12 @@
 import type { SceneModel } from '@graphlearning/graphl-flow'
 import { introScenes } from './intro'
 import { shellScenes } from './shell'
+import { packagesScenes } from './packages'
+import { textScenes } from './text'
 
 // Scene registry, grouped by course (one folder each, mirroring src/content). Ids are globally
 // unique: a duplicate THROWS rather than letting one course's scene shadow another's.
-const GROUPS: Record<string, SceneModel>[] = [introScenes, shellScenes]
+const GROUPS: Record<string, SceneModel>[] = [introScenes, shellScenes, packagesScenes, textScenes]
 
 export const SCENES: Record<string, SceneModel> = {}
 for (const group of GROUPS)

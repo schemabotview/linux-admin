@@ -1,0 +1,46 @@
+sysops@web-01:~$ cat /etc/apt/sources.list.d/debian.sources
+Types: deb
+URIs: http://snapshot.debian.org/archive/debian/20261026T000000Z
+Suites: trixie trixie-updates
+Components: main
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+
+Types: deb
+URIs: http://snapshot.debian.org/archive/debian-security/20261026T000000Z
+Suites: trixie-security
+Components: main
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+sysops@web-01:~$ sudo apt update
+[sudo] password for sysops:
+Get:1 http://snapshot.debian.org/archive/debian/20261026T000000Z trixie InReleas
+e [140 kB]
+Get:2 http://snapshot.debian.org/archive/debian/20261026T000000Z trixie-updates
+InRelease [47.3 kB]
+Get:3 http://snapshot.debian.org/archive/debian-security/20261026T000000Z trixie
+-security InRelease [43.4 kB]
+Get:4 http://snapshot.debian.org/archive/debian/20261026T000000Z trixie/main amd
+64 Packages [9678 kB]
+Get:5 http://snapshot.debian.org/archive/debian/20261026T000000Z trixie/main Tra
+nslation-en [6486 kB]
+Get:6 http://snapshot.debian.org/archive/debian/20261026T000000Z trixie-updates/
+main amd64 Packages [720 B]
+Get:7 http://snapshot.debian.org/archive/debian/20261026T000000Z trixie-updates/
+main Translation-en [772 B]
+Get:8 http://snapshot.debian.org/archive/debian-security/20261026T000000Z trixie
+-security/main amd64 Packages [270 kB]
+Get:9 http://snapshot.debian.org/archive/debian-security/20261026T000000Z trixie
+-security/main Translation-en [166 kB]
+Fetched 16.8 MB in 11s (1485 kB/s)
+All packages are up to date.
+sysops@web-01:~$ apt-cache policy nginx
+nginx:
+  Installed: (none)
+  Candidate: 1.26.3-3+deb13u10
+  Version table:
+     1.26.3-3+deb13u10 500
+        500 http://snapshot.debian.org/archive/debian-security/20261026T000000Z
+trixie-security/main amd64 Packages
+     1.26.3-3+deb13u7 500
+        500 http://snapshot.debian.org/archive/debian/20261026T000000Z trixie/ma
+in amd64 Packages
+sysops@web-01:~$

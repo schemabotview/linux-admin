@@ -1,0 +1,52 @@
+{
+ "note": "4.7: nano's shortcut bar, then vim: normal, insert, :wq. Leaves ~/notes.txt for later courses.",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  {
+   "keys": "nano notes.txt\\r",
+   "quiet": 3
+  },
+  {
+   "grab": "nano"
+  },
+  {
+   "keys": "\\x18",
+   "quiet": 2
+  },
+  {
+   "keys": "vim notes.txt\\r",
+   "quiet": 4
+  },
+  {
+   "grab": "vim-normal"
+  },
+  {
+   "keys": "i",
+   "quiet": 1
+  },
+  {
+   "keys": "web-01: nginx installed, serving the default page.",
+   "quiet": 2
+  },
+  {
+   "grab": "vim-insert"
+  },
+  {
+   "keys": "\\x1b:wq",
+   "quiet": 2
+  },
+  {
+   "grab": "vim-command"
+  },
+  {
+   "keys": "\\r",
+   "quiet": 3
+  },
+  "cat notes.txt"
+ ]
+}

@@ -29,19 +29,37 @@ ssh_keys:
     BpNwE2u5YL99cm3hjmh+AAAABndlYi0wMQECAwQFBgc=
     -----END OPENSSH PRIVATE KEY-----
   ed25519_public: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJpdUM2uJTVf7Y7rcMA7bdM7BpNwE2u5YL99cm3hjmh+ web-01
-apt:
-  preserve_sources_list: false
-  sources_list: |
-    deb http://snapshot.debian.org/archive/debian/20261026T000000Z trixie main
-    deb http://snapshot.debian.org/archive/debian/20261026T000000Z trixie-updates main
-    deb http://snapshot.debian.org/archive/debian-security/20261026T000000Z trixie-security main
-  conf: |
-    Acquire::Check-Valid-Until "false";
+# The pinned archive, written as Debian 13's own deb822 file (cloud-init's `apt: sources_list` was
+# ignored for trixie, and the image's debian.sources then pointed at the moving archive).
+write_files:
+  - path: /etc/apt/sources.list.d/debian.sources
+    content: |
+      Types: deb
+      URIs: http://snapshot.debian.org/archive/debian/20261026T000000Z
+      Suites: trixie trixie-updates
+      Components: main
+      Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+
+      Types: deb
+      URIs: http://snapshot.debian.org/archive/debian-security/20261026T000000Z
+      Suites: trixie-security
+      Components: main
+      Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+  # the lab host's package cache (lab/aptcache.py), reached through QEMU's gateway
+  - path: /etc/apt/apt.conf.d/01lab-cache
+    content: |
+      Acquire::http::Proxy "http://10.0.2.2:3142";
+      // apt's bottom-of-screen progress bar is drawn in a scroll region and erased when apt ends;
+      // off, the capture keeps every row a terminal ends up showing (lab/capture.py has no scroll region)
+      Dpkg::Progress-Fancy "0";
+  - path: /etc/apt/apt.conf.d/99snapshot
+    content: |
+      // a pinned snapshot's Release files are older than apt's freshness window
+      Acquire::Check-Valid-Until "false";
 package_update: false
 package_upgrade: false
 runcmd:
   - [systemctl, disable, --now, systemd-timesyncd.service]
   # nothing may run apt behind a replay's back: course 6 runs it, by hand
   - [systemctl, disable, --now, apt-daily.timer, apt-daily-upgrade.timer, unattended-upgrades.service]
-  - [rm, -f, /etc/apt/sources.list.d/debian.sources]
   - [touch, /etc/cloud/cloud-init.disabled]

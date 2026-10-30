@@ -25,7 +25,10 @@ export const ttyNode = (title: string, grab: Grab): Tty => ({
   type: 'tty', id: 'console', title, w: CONSOLE.w, h: CONSOLE.h, fill: true, screen: grab.screen, inverse: runs(grab.inverse), bold: runs(grab.bold),
 })
 
-const picture = (children: SceneNode[]): Group => ({ type: 'group', id: 'picture', bare: true, w: PICTURE_W, h: CONSOLE.h, children })
+// The picture's parts in ONE group, centred in the column by `spread` (with a single child,
+// space-evenly is centring): the space goes above and below the whole picture, never between its parts.
+const picture = (children: SceneNode[]): Group => ({ type: 'group', id: 'picture', bare: true, spread: true, w: PICTURE_W, h: CONSOLE.h,
+  children: [{ type: 'group', id: 'content', bare: true, children }] })
 
 export const consoleFrame = (left: Code | Tty, right: SceneNode[], edges: SceneModel['edges'] = []): SceneModel => ({
   dir: 'row', nodes: [left, picture(right)], edges,

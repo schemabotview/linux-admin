@@ -1,0 +1,31 @@
+sysops@web-01:~$ echo /etc/nginx/*.conf
+/etc/nginx/fastcgi.conf /etc/nginx/nginx.conf
+sysops@web-01:~$ echo '/etc/nginx/*.conf'
+/etc/nginx/*.conf
+sysops@web-01:~$ echo /etc/nginx/*.nothing
+/etc/nginx/*.nothing
+sysops@web-01:~$ echo $HOME
+/home/sysops
+sysops@web-01:~$ echo '$HOME'
+$HOME
+sysops@web-01:~$ echo "$HOME"
+/home/sysops
+sysops@web-01:~$ echo two     spaces
+two spaces
+sysops@web-01:~$ echo 'two     spaces'
+two     spaces
+sysops@web-01:~$ ls /etc/n*
+/etc/nanorc  /etc/netconfig  /etc/networks  /etc/nsswitch.conf
+
+/etc/netplan:
+50-cloud-init.yaml
+
+/etc/network:
+if-pre-up.d  if-up.d
+
+/etc/nginx:
+conf.d          koi-win            nginx.conf       sites-enabled
+fastcgi.conf    mime.types         proxy_params     snippets
+fastcgi_params  modules-available  scgi_params      uwsgi_params
+koi-utf         modules-enabled    sites-available  win-utf
+sysops@web-01:~$

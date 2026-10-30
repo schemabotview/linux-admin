@@ -1,0 +1,15 @@
+{
+ "note": "4.4: top clients and status codes, built one stage at a time.",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "cut -d ' ' -f 1 /var/log/nginx/access.log | head -n 3",
+  "cut -d ' ' -f 1 /var/log/nginx/access.log | sort | uniq -c",
+  "cut -d ' ' -f 1 /var/log/nginx/access.log | sort | uniq -c | sort -rn | head -n 3",
+  "cut -d ' ' -f 9 /var/log/nginx/access.log | sort | uniq -c"
+ ]
+}

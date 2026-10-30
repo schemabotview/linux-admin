@@ -1,0 +1,15 @@
+{
+ "note": "4.2: one program's output into the next: grep | head, grep | wc -l.",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "wc -l /var/log/nginx/access.log",
+  "head -n 2 /var/log/nginx/access.log",
+  "grep ' 404 ' /var/log/nginx/access.log | head -n 3",
+  "grep ' 404 ' /var/log/nginx/access.log | wc -l"
+ ]
+}

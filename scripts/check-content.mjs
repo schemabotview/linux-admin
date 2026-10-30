@@ -5,7 +5,7 @@
 //   2. Node ids are unique within a scene (graphl-flow resolves edges and focus by id).
 //   3. A console frame draws edges only INSIDE its picture: an edge between the columns widens the
 //      gap it crosses and moves both off the shared template.
-//   4. A console holds what the pty drew: at most CONSOLE.rows rows of at most CONSOLE.cols columns
+//   4. A console holds what the pty drew: at most CONSOLE.rows DRAWN rows (`show` folds count one) of at most CONSOLE.cols columns
 //      (a wider row would mean the transcript was edited, not captured).
 //   5. Once a course has narration audio, every section of it has its wav.
 //
@@ -35,7 +35,11 @@ for (const [id, scene] of Object.entries(SCENES)) {
   for (const { node } of all) {
     const rows = node.type === 'tty' ? node.screen : node.type === 'code' && node.console ? node.code.split('\n') : null
     if (!rows) continue
-    if (node.id === 'console' && rows.length > FRAME.CONSOLE.rows) problems.push(`scene ${id}  the console has ${rows.length} rows; the pty had ${FRAME.CONSOLE.rows}`)
+    // Rows as graphl-flow DRAWS them: with `show`, the kept rows plus one fold row per skipped run.
+    // A long real output (an apt install) is folded for display, never edited.
+    const keep = node.show && new Set(node.show.flatMap(([a, b]) => Array.from({ length: b - a + 1 }, (_, i) => a + i)))
+    const drawn = keep ? rows.filter((_, i) => keep.has(i + 1) || i === 0 || keep.has(i)).length : rows.length // a skipped row counts once per run: when the row before it was kept (or it is first)
+    if (node.id === 'console' && drawn > FRAME.CONSOLE.rows) problems.push(`scene ${id}  the console draws ${drawn} rows; the pty had ${FRAME.CONSOLE.rows} — fold with show`)
     const wide = rows.find((r) => r.length > FRAME.CONSOLE.cols)
     if (wide) problems.push(`scene ${id}  '${node.id}' has a ${wide.length}-column row; the pty was ${FRAME.CONSOLE.cols} wide — "${wide.slice(0, 40)}…"`)
   }

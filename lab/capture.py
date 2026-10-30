@@ -44,6 +44,7 @@ LAB_DIR = Path(__file__).parent
 ALT = re.compile(rb'(\x1b\[\?(?:1049|1047|47)[hl])')
 ALT_ON = {b'\x1b[?1049h', b'\x1b[?1047h', b'\x1b[?47h'}
 ALT_OFF = {b'\x1b[?1049l', b'\x1b[?1047l', b'\x1b[?47l'}
+DECSTBM = re.compile(rb'\x1b\[\d*(?:;\d*)?r')
 
 
 def setup_ops() -> None:
@@ -65,6 +66,15 @@ def setup_ops() -> None:
     subprocess.run(['chown', '-R', 'sysops:sysops', str(ssh)], check=True)
 
 
+class Screen(pyte.Screen):
+    """pyte's screen, minus one crash: vim sends `ESC[>4;2m` (xterm modifyOtherKeys), a PRIVATE
+    sequence that pyte hands to its colour handler. It sets a keyboard mode and draws nothing."""
+
+    def select_graphic_rendition(self, *attrs, private=False):
+        if not private:
+            super().select_graphic_rendition(*attrs)
+
+
 def _attrs(screen: pyte.Screen, row: int) -> tuple[list, list]:
     inv, bold = [], []
     line = screen.buffer[row]
@@ -82,8 +92,8 @@ def _attrs(screen: pyte.Screen, row: int) -> tuple[list, list]:
 
 class Console:
     def __init__(self):
-        self.tall = pyte.Screen(COLS, 5000)
-        self.real = pyte.Screen(COLS, ROWS)
+        self.tall = Screen(COLS, 5000)
+        self.real = Screen(COLS, ROWS)
         self.stream = pyte.ByteStream()
         self.stream.attach(self.tall)
         self.real_stream = pyte.ByteStream(self.real)
@@ -122,7 +132,9 @@ class Console:
             elif part in ALT_OFF:
                 self.alt = False
             elif not self.alt:
-                self.stream.feed(part)
+                # a scroll region (DECSTBM) would make the never-scrolling tall screen scroll inside
+                # the pty's 43 rows and lose the top: a terminal's scrollback keeps those rows
+                self.stream.feed(DECSTBM.sub(b'', part))
         return True
 
     def settle(self, quiet: float = 1.0, timeout: float = 600) -> None:

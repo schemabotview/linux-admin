@@ -1,0 +1,21 @@
+{
+ "note": "3.2: apt install nginx: the plan, the question, the install; the welcome page answers.",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  {
+   "cmd": "sudo apt install nginx",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops",
+   "wait": "\\[Y/n\\] $"
+  },
+  "y",
+  "curl -sI localhost"
+ ]
+}

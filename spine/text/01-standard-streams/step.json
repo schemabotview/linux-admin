@@ -1,0 +1,22 @@
+{
+ "note": "4.1 (full scene): stdin, stdout, stderr; > and 2> rewire them; /proc/self/fd shows them. Hidden first: lab/scripts/traffic.sh sends nginx real requests (course 4's log).",
+ "upload": {
+  "lab/scripts/traffic.sh": "/tmp/traffic.sh"
+ },
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "sh /tmp/traffic.sh && rm /tmp/traffic.sh",
+    "clear"
+   ]
+  },
+  "ls /etc/hostname /nope",
+  "ls /etc/hostname /nope > out.txt",
+  "cat out.txt",
+  "ls /etc/hostname /nope 2> err.txt",
+  "cat err.txt",
+  "ls -l /proc/self/fd",
+  "rm out.txt err.txt"
+ ]
+}

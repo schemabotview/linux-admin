@@ -4,7 +4,8 @@
     python3 lab/replay.py shell/04         replay that step (and whatever is stale after it)
     python3 lab/replay.py --check          no VM: fail if any step is stale or has no transcript
 
-A step is `spine/<course>/<NN-id>/step.json`; its snapshot tag is `<course>-<NN>`. Replaying a step
+A step is `spine/<course>/<NN-id>/step.json`; its snapshot tag is `<course>-<NN>`. `"upload":
+{"lab/file": "/remote/path"}` copies lab files into the VM before the session (hidden setup). Replaying a step
 restores its PARENT's snapshot (the previous non-branch step, or `base`), runs the session in the
 `ops` console, writes `session.txt` (+ `tty/<name>.json` for each grab), and saves its own snapshot.
 A `"branch": true` step (one that breaks the machine) is run and then discarded: it saves nothing,
@@ -30,7 +31,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 ROOT = Path(__file__).parent.parent
 SPINE = ROOT / 'spine'
 LOCK = SPINE / 'chain.lock'
-COURSES = ['intro', 'shell', 'text', 'users', 'processes', 'packages', 'services', 'network', 'storage', 'scripting', 'rhel']
+COURSES = ['intro', 'shell', 'packages', 'text', 'users', 'processes', 'services', 'network', 'storage', 'scripting', 'rhel']
 
 
 def steps() -> list[dict]:
@@ -41,7 +42,9 @@ def steps() -> list[dict]:
             continue
         for s in sorted(p for p in d.iterdir() if p.is_dir()):
             spec = json.loads((s / 'step.json').read_text())
-            out.append({'dir': s, 'tag': f'{course}-{s.name[:2]}', 'spec': spec, 'raw': (s / 'step.json').read_bytes()})
+            # an uploaded file is part of the step: editing it makes the step stale
+            raw = (s / 'step.json').read_bytes() + b''.join((ROOT / src).read_bytes() for src in spec.get('upload', {}))
+            out.append({'dir': s, 'tag': f'{course}-{s.name[:2]}', 'spec': spec, 'raw': raw})
     parent, key = 'base', hashlib.sha256(b'web-01 base').hexdigest()
     for s in out:
         s['parent'] = parent
@@ -68,8 +71,10 @@ def check() -> int:
 
 
 def replay(only: str | None) -> int:
+    import subprocess
+
     from capture import Console, setup_ops
-    from vm import VM
+    from vm import VM, ssh_opts
 
     lock = json.loads(LOCK.read_text()) if LOCK.exists() else {}
     vm = VM('web-01')
@@ -94,6 +99,9 @@ def replay(only: str | None) -> int:
         for s in todo:
             t0 = time.time()
             vm.restore(s['parent'])
+            for src, dst in s['spec'].get('upload', {}).items():  # lab files the session uses (never shown)
+                vm.wait_ssh()
+                subprocess.run(['scp', '-q', *ssh_opts(), str(ROOT / src), f'web-01:{dst}'], check=True)
             con = Console()
             grabs: dict = {}
             con.run(s['spec']['session'], grabs)

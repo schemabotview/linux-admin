@@ -1,6 +1,6 @@
 # Learn Linux administration by running a web server — plan
 
-**Status: v3 plan (2026-10-30): x86_64, one VM at a time, one vim section.** Courses 1–2 authored (spine captured, scenes, narration, checks); narration audio not generated yet.
+**Status: v3 plan (2026-10-30): x86_64, one VM at a time, one vim section.** Courses 1–4 authored (spine captured, scenes, narration, checks); narration audio not generated yet.
 
 ## The idea
 
@@ -29,8 +29,8 @@ fixtures are real captures from Debian 13 and Rocky 10.2 VMs.
 | --- | --- |
 | **Sysops team** | the people running the servers; the narration says "the team" |
 | `sysops` | the team's login on every machine (prompt `sysops@web-01:~$`) |
-| `sysops` (group) | the team; owns `/srv/sysops.example` (setgid, course 4) |
-| `deploy` | a service account added in course 4, used by the deploy script (course 10) |
+| `sysops` (group) | the team; owns `/srv/sysops.example` (setgid, course 5) |
+| `deploy` | a service account added in course 5, used by the deploy script (course 10) |
 | `ops` | the team's workstation: where every session starts, `ssh web-01`. **Not a VM** — a shell on the lab host in its own UTS namespace (hostname `ops`), so it costs nothing |
 | `web-01` | Debian 13 "trixie", x86_64, the web server of courses 1–10 |
 | `web-02` | Rocky Linux 10.2, x86_64, the web server of course 11 |
@@ -65,7 +65,7 @@ Containers start faster (< 1 s against a 5–15 s boot), but a container is a pr
 | --- | --- | --- |
 | `uname -r`, kernel vs distro (1.1) | shows the host's kernel | its own kernel |
 | boot, systemd as PID 1 (7.1, 7.2) | no boot; systemd needs privileged hacks | real |
-| `ps --forest` (5.2) | no systemd → sshd → bash tree | real |
+| `ps --forest` (6.2) | no systemd → sshd → bash tree | real |
 | `journalctl`, timers (7.5, 7.7) | partial | real |
 | nftables, firewalld (8.6, 11.3) | only a network namespace, needs `CAP_NET_ADMIN` | real |
 | `lsblk`, `mount`, `fstab`, `df` (9.1–9.3) | the host's disks and overlayfs | its own disks |
@@ -110,9 +110,10 @@ base ──▶ intro/01 ──▶ intro/02 ──▶ shell/01 ──▶ … ─�
 
 ### Determinism
 
-- **Packages come from a pinned local mirror on `ops`**: Debian from `snapshot.debian.org` at a
-  fixed timestamp, Rocky from the 10.2 vault, holding only the packages the course installs. A
-  replay is offline, and `apt install nginx` always installs the same version.
+- **Packages come from pinned archives**: Debian from `snapshot.debian.org` at 2026-10-26, Rocky
+  from the 10.2 vault, so `apt install nginx` always installs the same version. A replay that
+  installs packages needs the network; a local mirror (the original plan) would make it offline and
+  is a later optimisation.
 - **The guest clock is VM time** (`-rtc base=2026-11-02T09:00:00,clock=vm`, NTP off). Time
   advances only while the VM runs, and it continues from a snapshot rather than jumping to today.
 - **`volatile` steps** (PIDs, load averages, uptime, byte counts from `du`, timings) are compared with
@@ -180,19 +181,31 @@ Branch sections (run, then discarded) are marked ⑂.
 | 6 | Create, copy, move, remove | `site/` after each command; `mv`/`cp` replace silently unless `-i`; `rm -r` has no undo |
 | 7 | Reading files: `cat`, `less`, `head`, `tail` | which tool for which file; one `/etc/passwd` line read field by field (`tail -f` waits for course 7, the first log that grows) |
 
-**3. `text` · Text is the interface · 7**
+**3. `packages` · Installing software · 4**
+
+| # | Section | Picture |
+| --- | --- | --- |
+| 1 | What a package manager does | repo → signed index → package → files |
+| 2 | `apt install nginx` | the install's dependency tree; the welcome page answers `curl` |
+| 3 | What it put where (`dpkg -L`) | the files laid out in the tree |
+| 4 | Updates and upgrades | versions before/after |
+
+Moved before `text` (2026-10-30): the text course needs a log a real program writes, and nginx's
+access log is the one the rest of the course keeps reading.
+
+**4. `text` · Text is the interface · 7**
 
 | # | Section | Picture |
 | --- | --- | --- |
 | 1 | ◆ full scene: stdin, stdout, stderr | fd 0/1/2 → terminal; redirection rewires them |
-| 2 | Pipes | `grep … access.log \| wc -l` as stages |
+| 2 | Pipes | `grep … /var/log/nginx/access.log \| wc -l` as stages |
 | 3 | `grep` and regular expressions | the pattern taken apart, matches lit |
 | 4 | `cut`, `sort`, `uniq -c`: top clients in the access log | rows → buckets → ranking table |
 | 5 | `find` | the search on the tree, matches lit |
 | 6 | Quoting, globbing, expansion order | the shell's expansions before `exec` |
 | 7 | Editing a file: nano, then vim (tty) | vim's modes as states |
 
-**4. `users` · Who can do what · 6**
+**5. `users` · Who can do what · 6**
 
 | # | Section | Picture |
 | --- | --- | --- |
@@ -203,7 +216,7 @@ Branch sections (run, then discarded) are marked ⑂.
 | 5 | `sudo` and root | who runs what; `/etc/sudoers.d/sysops` |
 | 6 | The team's `/srv/sysops.example`: setgid, umask; the `deploy` account | a new file's owner and mode, before/after |
 
-**5. `processes` · What's running · 7**
+**6. `processes` · What's running · 7**
 
 | # | Section | Picture |
 | --- | --- | --- |
@@ -214,15 +227,6 @@ Branch sections (run, then discarded) are marked ⑂.
 | 5 | Jobs: `&`, `fg`, `bg`, `Ctrl-Z` | job states |
 | 6 | Environment and `PATH` | the lookup for one command name |
 | 7 | `/proc` | a process as files |
-
-**6. `packages` · Installing software · 4**
-
-| # | Section | Picture |
-| --- | --- | --- |
-| 1 | What a package manager does | repo → signed index → package → files |
-| 2 | `apt install nginx` | the install's dependency tree |
-| 3 | What it put where (`dpkg -L`) | the files laid out in the tree |
-| 4 | Updates and upgrades | versions before/after |
 
 **7. `services` · Keep it running · 7**
 
@@ -299,6 +303,6 @@ npm run shots -- <course>                            # then LOOK
 ## Decided (2026-10-30)
 
 - **x86_64** for the whole film.
-- **One vim section** (3.7).
+- **One vim section** (4.7).
 - **One VM at a time**; `ops` is a namespace on the host, the lab services are host processes.
 - **Rocky is the final course**; repo `schemabotview/linux-admin`.

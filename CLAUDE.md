@@ -10,8 +10,9 @@ Engine `@graphlearning/graphl-flow` ^0.8.0, shell `@graphlearning/shell` ^1.0.4.
 
 ## Status
 
-Courses 1 (`intro`, 2) and 2 (`shell`, 7) authored 2026-10-30: spine captured on the real VM,
-scenes, narration, checks green, every frame looked at. No narration audio yet.
+Authored 2026-10-30 (spine captured on the real VM, scenes, narration, checks green, every frame
+looked at; no narration audio yet): 1 `intro` 2, 2 `shell` 7, 3 `packages` 4, 4 `text` 7.
+`packages` moved before `text` so nginx's access log exists for the text tools.
 
 ## Every output is real
 
@@ -31,8 +32,9 @@ transcript shows; after a replay changes a value, grep the narration for it.
 ## Frames
 
 The console frame (`src/scenes/frame.ts`, graphl-flow's `console-frame` study): fixed console |
-fixed picture, one fit for every frame. No edges between the columns. The picture must FILL its
-column (check-render, ≥ 2/3 of its height) — with real material from the transcript, not spacing.
+fixed picture, one fit for every frame. No edges between the columns. The picture's parts sit in ONE
+group centred in the column; check-render fails a picture under 45% of the column — fill it with real
+material from the transcript, never with spacing between parts.
 Full scenes (◆) are their own sections.
 
 ## Checks, before handing over

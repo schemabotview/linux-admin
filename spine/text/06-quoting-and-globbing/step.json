@@ -1,0 +1,20 @@
+{
+ "note": "4.6: the shell expands *, $ and spaces before the program runs; quotes stop it.",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "echo /etc/nginx/*.conf",
+  "echo '/etc/nginx/*.conf'",
+  "echo /etc/nginx/*.nothing",
+  "echo $HOME",
+  "echo '$HOME'",
+  "echo \"$HOME\"",
+  "echo two     spaces",
+  "echo 'two     spaces'",
+  "ls /etc/n*"
+ ]
+}

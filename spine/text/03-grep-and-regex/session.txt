@@ -1,0 +1,14 @@
+sysops@web-01:~$ grep -c 'wp-login' /var/log/nginx/access.log
+9
+sysops@web-01:~$ grep -c -E '"GET /(wp-login\.php|\.env|admin) ' /var/log/nginx/
+access.log
+19
+sysops@web-01:~$ grep -c -E '" [45][0-9]{2} ' /var/log/nginx/access.log
+22
+sysops@web-01:~$ grep -v -c 'Mozilla' /var/log/nginx/access.log
+28
+sysops@web-01:~$ grep -o -E '^127\.0\.0\.6[0-9]' /var/log/nginx/access.log | hea
+d -n 2
+127.0.0.66
+127.0.0.66
+sysops@web-01:~$

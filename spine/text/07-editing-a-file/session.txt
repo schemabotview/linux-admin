@@ -1,0 +1,5 @@
+sysops@web-01:~$ nano notes.txt
+sysops@web-01:~$ vim notes.txt
+sysops@web-01:~$ cat notes.txt
+web-01: nginx installed, serving the default page.
+sysops@web-01:~$

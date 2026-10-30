@@ -1,0 +1,16 @@
+{
+ "note": "4.5: find by name, type and size; the permission errors, and 2> /dev/null.",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "find /etc/nginx -name '*.conf'",
+  "find /var/log -name '*.log'",
+  "find /var/log -name '*.log' 2> /dev/null",
+  "find /etc/nginx -type l",
+  "find /usr -type f -size +5M"
+ ]
+}

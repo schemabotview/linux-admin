@@ -1,0 +1,20 @@
+sysops@web-01:~$ apt-cache policy nginx
+nginx:
+  Installed: 1.26.3-3+deb13u10
+  Candidate: 1.26.3-3+deb13u10
+  Version table:
+ *** 1.26.3-3+deb13u10 500
+        500 http://snapshot.debian.org/archive/debian-security/20261026T000000Z
+trixie-security/main amd64 Packages
+        100 /var/lib/dpkg/status
+     1.26.3-3+deb13u7 500
+        500 http://snapshot.debian.org/archive/debian/20261026T000000Z trixie/ma
+in amd64 Packages
+sysops@web-01:~$ apt list --upgradable
+sysops@web-01:~$ sudo apt upgrade
+[sudo] password for sysops:
+Summary:
+  Upgrading: 0, Installing: 0, Removing: 0, Not Upgrading: 0
+sysops@web-01:~$ apt-mark showmanual nginx nginx-common
+nginx
+sysops@web-01:~$

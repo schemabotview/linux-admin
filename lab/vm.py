@@ -13,6 +13,7 @@ import json
 import os
 import socket
 import subprocess
+import sys
 import time
 from pathlib import Path
 
@@ -54,6 +55,10 @@ class VM:
     def start(self, loadvm: str | None = None) -> None:
         """The seed ISO is ALWAYS attached: a snapshot restores only into the device set it was saved
         with, and the base was saved after first boot with it in. cloud-init is disabled by then."""
+        import aptcache
+        if not aptcache.running():  # the VM's apt proxy (lab/aptcache.py); it outlives the VM, harmlessly
+            subprocess.Popen([sys.executable, str(Path(__file__).parent / 'aptcache.py')], start_new_session=True,
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         kvm = os.path.exists('/dev/kvm')
         self.qmp_path.unlink(missing_ok=True)
         cmd = [

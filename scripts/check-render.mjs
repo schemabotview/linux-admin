@@ -17,7 +17,7 @@
 //               rings whatever element carries that id — or nothing, silently)
 //   consoles    every console frame on the SAME fit, its console and picture columns at the same
 //               pixels (src/scenes/frame.ts exists so a viewer's eye never looks for the console), and
-//               the picture FILLING its column (≥ PICTURE_FILL of its height)
+//               the picture FILLING its column (≥ PICTURE_FILL of its height, centred)
 //
 // A floor, not proof: a frame can pass every assertion and read badly. Capture and look.
 //
@@ -29,7 +29,9 @@ import { isConsoleFrame, loadRegistry, nodesOf } from './registry.mjs'
 const PORT = 5189
 const BODY_MIN_PX = +(process.env.BODY_MIN_PX ?? 24)
 const ICON_MIN_PX = +(process.env.ICON_MIN_PX ?? 32)
-const PICTURE_FILL = +(process.env.PICTURE_FILL ?? 2 / 3)
+// 0.45: an honest picture beside a short transcript holds about half the column, centred (frame.ts);
+// the near-empty, top-stacked first builds were 34–43%.
+const PICTURE_FILL = +(process.env.PICTURE_FILL ?? 0.45)
 
 const { COURSES, SCENES } = await loadRegistry()
 const sections = Object.values(COURSES).flatMap((c) => c.sections.map((s) => ({ slug: `${c.id}-${s.id}`, section: s, scene: SCENES[s.scene] })))
@@ -193,7 +195,7 @@ try {
       // The picture FILLS its column: its parts span >= PICTURE_FILL of the column's height. The first
       // build stacked every picture at the top of an empty column, with every other check green.
       if (ide) {
-        const col = R(node('picture')), parts = [...node('picture').children[0].children].map(R)
+        const col = R(node('picture')), parts = [...node('content').querySelectorAll(':scope > * > [data-id], :scope > [data-id]')].map(R)
         const fill = parts.length ? (Math.max(...parts.map((r) => r.y + r.h)) - Math.min(...parts.map((r) => r.y))) / col.h : 0
         if (fill < limits.fill) out.push(`the picture spans ${Math.round(fill * 100)}% of its column (< ${Math.round(limits.fill * 100)}%) — fill it`)
       }

@@ -1,0 +1,48 @@
+sysops@web-01:~$ sudo apt install nginx
+[sudo] password for sysops:
+Installing:
+  nginx
+
+Installing dependencies:
+  nginx-common
+
+Suggested packages:
+  fcgiwrap  nginx-doc  ssl-cert
+
+Summary:
+  Upgrading: 0, Installing: 2, Removing: 0, Not Upgrading: 0
+  Download size: 725 kB
+  Space needed: 1906 kB / 7043 MB available
+
+Continue? [Y/n] y
+Get:1 http://snapshot.debian.org/archive/debian-security/20261026T000000Z trixie
+-security/main amd64 nginx-common all 1.26.3-3+deb13u10 [112 kB]
+Get:2 http://snapshot.debian.org/archive/debian-security/20261026T000000Z trixie
+-security/main amd64 nginx amd64 1.26.3-3+deb13u10 [614 kB]
+Fetched 725 kB in 1s (1331 kB/s)
+Preconfiguring packages ...
+Selecting previously unselected package nginx-common.
+(Reading database ... 20630 files and directories currently installed.)
+Preparing to unpack .../nginx-common_1.26.3-3+deb13u10_all.deb ...
+Unpacking nginx-common (1.26.3-3+deb13u10) ...
+Selecting previously unselected package nginx.
+Preparing to unpack .../nginx_1.26.3-3+deb13u10_amd64.deb ...
+Unpacking nginx (1.26.3-3+deb13u10) ...
+Setting up nginx-common (1.26.3-3+deb13u10) ...
+Created symlink '/etc/systemd/system/multi-user.target.wants/nginx.service' → '/
+usr/lib/systemd/system/nginx.service'.
+Setting up nginx (1.26.3-3+deb13u10) ...
+Upgrading binary: nginx.
+Processing triggers for man-db (2.13.1-1) ...
+sysops@web-01:~$ curl -sI localhost
+HTTP/1.1 200 OK
+Server: nginx
+Date: Mon, 02 Nov 2026 09:08:20 GMT
+Content-Type: text/html
+Content-Length: 615
+Last-Modified: Mon, 02 Nov 2026 09:07:48 GMT
+Connection: keep-alive
+ETag: "6ae852e4-267"
+Accept-Ranges: bytes
+
+sysops@web-01:~$

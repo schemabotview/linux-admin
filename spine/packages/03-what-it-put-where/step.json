@@ -1,0 +1,18 @@
+{
+ "note": "3.3: the files a package installs, which package owns a file, and that it is already running.",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "dpkg -L nginx",
+  "dpkg -S /etc/nginx/nginx.conf",
+  "ls -F /etc/nginx",
+  "ls /var/www/html",
+  "ls -l /var/log/nginx",
+  "systemctl is-active nginx",
+  "systemctl is-enabled nginx"
+ ]
+}

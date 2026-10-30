@@ -9,6 +9,8 @@ Everything that produces the spine's transcripts. See `LINUX-COURSE-PLAN.md`, "T
 | `vm.py` | start / save / restore the VM through QMP. Disk + section snapshots live in `$LAB/web-01.qcow2` (default `/home/user/lab/images`), never in git |
 | `build_base.py` | first boot with the seed, one normal reboot, `savevm base`. Rebuilding it invalidates the whole chain |
 | `capture.py` | the `ops` console: `su - sysops` in its own UTS namespace (hostname `ops`, no VM), an 80 × 43 pty, `pyte` recording what the terminal drew; `grab` saves full-screen programs |
+| `aptcache.py` | the VM's apt proxy on the lab host (:3142): serves the pinned archives from `$LAB/apt-cache`, fetching each file once over HTTPS. Started by `vm.py` |
+| `scripts/` | files a step uploads into the VM (`"upload"` in step.json), e.g. `traffic.sh` |
 | `replay.py` | the chain: restore the parent snapshot, run a step, write `session.txt` + `tty/*.json`, save. `--check` needs no VM |
 
 ## Setting up a lab host (once)

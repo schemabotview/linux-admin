@@ -1,0 +1,20 @@
+{
+ "note": "3.1: where packages come from (the pinned archive), apt update, what the archive offers for nginx.",
+ "session": [
+  {
+   "hidden": [
+    "ssh web-01",
+    "clear"
+   ]
+  },
+  "cat /etc/apt/sources.list.d/debian.sources",
+  {
+   "cmd": "sudo apt update",
+   "wait": "password for sysops: $"
+  },
+  {
+   "secret": "sysops"
+  },
+  "apt-cache policy nginx"
+ ]
+}

@@ -18,11 +18,19 @@ export function read(session: string, pattern: RegExp): string {
   return m[1]
 }
 
-/** The output of one command: the rows after the prompt row that ends with `command`, up to the next prompt. */
+/** The output of one command: the rows after the prompt row(s) that end with `command`, up to the next
+ *  prompt. A command row exactly 80 wide WRAPPED (graphl-flow's console rule), so it is joined with the
+ *  rows that continue it before comparing. */
 export function outputOf(session: string, command: string): string {
   const rows = session.split('\n')
-  const at = rows.findIndex((r) => /[$#] /.test(r) && r.endsWith(command))
-  if (at < 0) throw new Error(`the transcript never runs ${JSON.stringify(command)}`)
-  const end = rows.findIndex((r, i) => i > at && /^\S+@\S+:.*[$#]( |$)/.test(r))
-  return rows.slice(at + 1, end < 0 ? undefined : end).join('\n')
+  const prompt = /^\S+@\S+:.*?[$#]( |$)/
+  for (let i = 0; i < rows.length; i++) {
+    if (!prompt.test(rows[i])) continue
+    let line = rows[i], j = i
+    while (rows[j].length === 80 && j + 1 < rows.length) line += rows[++j]
+    if (!line.endsWith(command)) continue
+    const end = rows.findIndex((r, k) => k > j && prompt.test(r))
+    return rows.slice(j + 1, end < 0 ? undefined : end).join('\n')
+  }
+  throw new Error(`the transcript never runs ${JSON.stringify(command)}`)
 }
