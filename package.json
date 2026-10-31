@@ -17,7 +17,9 @@
     "gen:audio": "graphl-gen-audio",
     "gen:desc": "graphl-gen-desc",
     "thumb": "graphl-thumb",
-    "shots": "node scripts/shots.mjs"
+    "shots": "node scripts/shots.mjs",
+    "film": "node scripts/film.mjs",
+    "thumb:film": "node scripts/thumb-film.mjs"
   },
   "dependencies": {
     "@graphlearning/graphl-flow": "^0.8.0",

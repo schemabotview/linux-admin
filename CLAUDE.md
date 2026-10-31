@@ -11,10 +11,14 @@ Engine `@graphlearning/graphl-flow` ^0.8.0, shell `@graphlearning/shell` ^1.0.4.
 ## Status
 
 ALL ELEVEN COURSES AUTHORED, 67 sections (2026-10-30/31): spine captured on real VMs, scenes,
-narration, checks green, every frame looked at. No narration audio yet; awaiting the owner's review.
+narration, checks green, every frame looked at.
 1 `intro` 2, 2 `shell` 7, 3 `packages` 4, 4 `text` 7, 5 `users` 6, 6 `processes` 7, 7 `services` 7,
 8 `network` 8, 9 `storage` 6, 10 `scripting` 6, 11 `rhel` 7 (on web-02, Rocky 10.2).
 `packages` moved before `text` so nginx's access log exists for the text tools.
+
+NARRATED AND RECORDED 2026-10-31: all 67 wavs in, every course captured at 3840×2160, and combined
+into the single YouTube film (`npm run film` → 1:37:55, 67 chapters). Cover and descriptions built.
+Awaiting the owner's review of the whole course.
 
 ## Every output is real
 
@@ -46,6 +50,25 @@ npx tsc --noEmit && npm run build && npm run check   # check-content + check-ren
 npm run check:spine
 npm run shots -- <course>                            # then LOOK
 ```
+
+## Publishing
+
+```sh
+npm run record:all          # caffeinate + 4K capture, one mp4 per course (2.4s loop method)
+npm run film                # all 67 segments → scripts/out/film.mp4 + film.txt (chapters)
+npm run film -- --desc-only # rewrite film.txt against the film on disk (seconds, no re-encode)
+npm run gen:desc            # per-course YouTube descriptions → scripts/out/<course>.txt
+npm run thumb:film          # the film cover → output/thumbnails/film.png
+```
+
+The film's title is fixed by `LINUX-COURSE-PLAN.md` §"Packaging for YouTube"; per-course publish
+titles live in `scripts/titles.json`. The concat is a stream copy (one encoder path for every
+segment), then ONE linear `loudnorm` pass to −14 LUFS / −1 dBTP — the wavs land ~−18.5 LUFS and peak
+over 0 dBTP, which clips through AAC. Chapter offsets come from each segment's PROBED duration, never
+from wav arithmetic. The cover reads the scene registry and the spine and FAILS rather than invent.
+It ships with Tux, whose trademark question is OPEN — read `output/thumbnails/README.md` before
+publishing, and keep the Ewing/GIMP credit that `film.txt` carries. `film-glyph.png` is the same
+cover with the repo's own mark, rendered and ready if the answer is no.
 
 ## Invariants
 

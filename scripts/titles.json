@@ -1,0 +1,14 @@
+{
+  "_comment": "Curated publish titles (YouTube title + thumbnail header) per course, keyed by course id. Search-first: what someone would actually type into YouTube, never 'Course 4'. One entry per course in src/content/index.ts. Read by @graphlearning/shell's gen-descriptions and thumb scripts; the single full-course film sets its own title in scripts/film.mjs.",
+  "intro": "What Linux actually is: the kernel, the distribution, and the server we'll build",
+  "shell": "The Linux shell for beginners: ssh, paths, files, and reading the manual",
+  "packages": "apt explained: installing nginx and keeping a Debian server updated",
+  "text": "Linux text tools: pipes, grep, sed and awk on a real nginx log",
+  "users": "Linux users, groups, file permissions and sudo, explained properly",
+  "processes": "Linux processes: ps, top, signals, and stopping a runaway program",
+  "services": "systemd explained: systemctl, unit files, journalctl and timers",
+  "network": "Linux networking: ports, DNS, SSH keys, nftables firewall and HTTPS",
+  "storage": "Linux storage: partitions, filesystems, fstab, a full disk, and backups",
+  "scripting": "Bash scripting for sysadmins: a real deploy script, from first line to timer",
+  "rhel": "Rocky Linux vs Debian: dnf, firewalld and SELinux for Red Hat beginners"
+}
