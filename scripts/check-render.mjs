@@ -202,6 +202,11 @@ try {
         const col = R(node('picture')), parts = [...node('content').querySelectorAll(':scope > * > [data-id], :scope > [data-id]')].map(R)
         const fill = parts.length ? (Math.max(...parts.map((r) => r.y + r.h)) - Math.min(...parts.map((r) => r.y))) / col.h : 0
         if (fill < limits.fill) out.push(`the picture spans ${Math.round(fill * 100)}% of its column (< ${Math.round(limits.fill * 100)}%) — fill it`)
+        // ...and stays INSIDE it: a column has a fixed height, and a tall tree pushed the picture's last
+        // table out of the frame's bottom with every other check green (shell-paths, frame v2).
+        const all = [...node('content').querySelectorAll('[data-id]')].map(R)
+        if (all.some((r) => r.y < col.y - 1 || r.y + r.h > col.y + col.h + 1 || r.x < col.x - 1 || r.x + r.w > col.x + col.w + 1))
+          out.push('the picture runs outside its column — cut it to fit')
       }
       return { problems: [...new Set(out)], panes }
     }, [{ body: BODY_MIN_PX, icon: ICON_MIN_PX, fill: PICTURE_FILL }, icons, section.focus, isConsoleFrame(scene)])

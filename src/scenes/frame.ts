@@ -33,6 +33,10 @@ const runs = (r: number[][]) => r.map(([row, from, to]) => [row, from, to] as [n
  * `nano` fill the screen from the top and pin their chrome (a status line, nano's two help rows) to
  * the bottom, so the grab's first rows plus its last `foot` rows are exactly what a terminal
  * CONSOLE.rows tall would have drawn — a crop, not an edit. Runs on dropped rows go with them.
+ * Only where that chrome reads the same at CONSOLE.rows: `man`'s "line 1" and vim's "All" do. `less`
+ * paints a file shorter than the screen from the BOTTOM up (the grab's top rows are blank), so a short
+ * file takes `foot: CONSOLE.rows`: the grab's last rows, which a 29-row terminal draws the same, its
+ * `(END)` included — check that the file's rows fit before using it.
  */
 export const ttyNode = (title: string, grab: Grab, foot = 1): Tty => {
   const n = grab.screen.length, top = CONSOLE.rows - foot
