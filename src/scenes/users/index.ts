@@ -39,31 +39,25 @@ const users = consoleFrame(
     { type: 'group', id: 'member', title: 'Groups sysops belongs to', icon: 'users', tone: 'source', dir: 'row', children: groups.map((g) => (
       { type: 'item' as const, id: `g-${g.name}`, title: `${g.name} (${g.gid})`, sub: g.name === 'adm' ? 'may read system logs: nginx’s too' : 'its own private group', icon: 'users', stack: true, chip: true }
     )) },
-    { type: 'table', id: 'files', title: 'Where the system keeps these', tone: 'infra', fill: true, columns: ['file', 'one line per', 'here'], rows: [
-      ['/etc/passwd', 'user', read(s1, /^(sysops:x:[^\n]+)$/m)],
-      ['/etc/group', 'group, with its members', read(s1, /^(adm:x:[^\n]+)$/m)],
-      ['/etc/shadow', 'user’s password hash', 'root only: next section'],
-    ] },
-    { type: 'note', id: 'note', tone: 'source', text: `www-data is the account nginx runs as: no password, no shell. A service gets its own account so a fault in it can reach only what that account may touch. The sudo group is empty (sudo:x:27:) — sysops gets sudo another way (5.5).` },
   ],
 )
 
 // 5.2 — reading rwx off ls -l.
 const notes = lsRow(outputOf(s2, 'ls -l notes.txt'))
 const shadow = lsRow(outputOf(s2, 'ls -l /etc/shadow'))
-const tmp = lsRow(outputOf(s2, 'ls -ld /home/sysops /tmp').split('\n')[1])
 const COLS = ['who', 'is', 'bits', 'read', 'write', 'execute']
+const shadowT = [1, 4, 7].map((at) => shadow.mode.slice(at, at + 3))
 const permissions = consoleFrame(
   consoleNode(WEB, s2, { highlight: [rowOf(s2, 'notes.txt', 2), rowOf(s2, 'Permission denied')] }),
   [
-    { type: 'table', id: 'notes', title: `${notes.mode}  ${notes.owner} ${notes.group}  notes.txt`, tone: 'store', fill: true, columns: COLS, rows: triplets(notes.mode, [notes.owner, notes.group, 'everyone else']) },
-    { type: 'table', id: 'shadow', title: `${shadow.mode}  ${shadow.owner} ${shadow.group}  /etc/shadow`, tone: 'consume', fill: true, columns: COLS, rows: triplets(shadow.mode, [shadow.owner, shadow.group, 'sysops, here']) },
-    { type: 'table', id: 'first', title: 'The first character, and two specials', tone: 'infra', fill: true, columns: ['seen', 'means'], rows: [
-      ['- / d / l', 'a file / a directory / a symbolic link'],
-      [`${tmp.mode} (/tmp)`, 't, sticky: anyone may create, only the owner may delete'],
+    { type: 'group', id: 'one', title: `cat /etc/shadow: Linux checks ONE triplet`, icon: 'lock', tone: 'consume', children: [
+      { type: 'item', id: 'own', title: 'Do you own it?', sub: `the owner, ${shadow.owner}, gets ${shadowT[0]} — sysops is not ${shadow.owner}`, icon: 'user' },
+      { type: 'item', id: 'grp', title: 'Are you in its group?', sub: `the group, ${shadow.group}, gets ${shadowT[1]} — sysops is not in it`, icon: 'users' },
+      { type: 'item', id: 'oth', title: `Then you are others: ${shadowT[2]}`, sub: 'no read, so cat is refused: Permission denied', icon: 'lock', tone: 'consume' },
     ] },
-    { type: 'note', id: 'note', tone: 'consume', text: `Linux checks ONE triplet: the owner’s if you own the file, else the group’s if you are in its group, else others’. sysops is neither root nor in shadow — so “others”: no read, and cat is refused.` },
+    { type: 'table', id: 'notes', title: `${notes.mode}  ${notes.owner} ${notes.group}  notes.txt`, tone: 'store', fill: true, columns: COLS, rows: triplets(notes.mode, [notes.owner, notes.group, 'everyone else']) },
   ],
+  [{ from: 'own', to: 'grp', label: 'no' }, { from: 'grp', to: 'oth', label: 'no' }],
 )
 
 // 5.3 — chmod in letters and in numbers; chown; a write refused by ownership.
@@ -74,69 +68,57 @@ if (listed.length !== 3) throw new Error(`5.3: expected 3 listings of notes.txt,
 const chmod = consoleFrame(
   consoleNode(WEB, s3, { highlight: [rowOf(s3, '644 -rw-r--r--'), rowOf(s3, '-bash: notes.txt: Permission denied')] }),
   [
-    { type: 'table', id: 'octal', title: `stat: ${stat[1]} is ${stat[0]}`, tone: 'ingest', fill: true, columns: ['who', 'bits', 'r=4', 'w=2', 'x=1', 'digit'], rows: [1, 4, 7].map((at, i) => {
+    { type: 'group', id: 'octal', title: `stat: ${stat[1]} is ${stat[0]}: r = 4, w = 2, x = 1`, icon: 'lock', tone: 'ingest', dir: 'row', children: [1, 4, 7].map((at, i) => {
       const t = stat[1].slice(at, at + 3)
-      return [['owner', 'group', 'others'][i], t, t[0] === 'r' ? '4' : '0', t[1] === 'w' ? '2' : '0', t[2] === 'x' ? '1' : '0', String(octal(t))]
+      return { type: 'item' as const, id: ['ou', 'og', 'oo'][i], title: `${t} = ${String(octal(t))}`, sub: `${['owner', 'group', 'others'][i]}: ${[...t].map((c, k) => (c === '-' ? 0 : [4, 2, 1][k])).join(' + ')}`, icon: ['user', 'users', 'globe'][i], stack: true }
     }) },
-    { type: 'table', id: 'ways', title: 'The two ways to write a change', tone: 'store', fill: true, columns: ['typed', 'gave notes.txt', 'style'], rows: [
-      ['chmod 600 notes.txt', listed[0].mode, 'numbers: set all three digits'],
-      ['chmod go+r notes.txt', stat[1], 'letters: add r for group, others'],
+    { type: 'table', id: 'ways', title: 'What each command did to notes.txt', tone: 'store', fill: true, columns: ['typed', 'notes.txt is'], rows: [
+      ['chmod 600', `${listed[0].mode}: all three set`],
+      ['chmod go+r', `${stat[1]}: r added`],
+      { id: 'root', cells: ['sudo chown root', `owner ${listed[1].owner}: sysops gets ${listed[1].mode.slice(4, 7)}`], tone: 'consume' },
+      ['sudo chown sysops', `owner ${listed[2].owner}: ${listed[2].mode.slice(1, 4)} again`],
     ] },
-    { type: 'table', id: 'own', title: 'chown: the owner decides who “owner” is', tone: 'consume', fill: true, columns: ['after', 'owner', 'sysops may write?'], rows: [
-      ['sudo chown root notes.txt', listed[1].owner, `no: sysops is now “group”, ${listed[1].mode.slice(4, 7)}`],
-      ['sudo chown sysops notes.txt', listed[2].owner, `yes again: ${listed[2].mode.slice(1, 4)}`],
-    ] },
-    { type: 'note', id: 'note', tone: 'consume', text: 'Changing the owner needs root, so a user cannot give files away to dodge a quota. chmod needs only ownership: the owner always decides the mode.' },
   ],
 )
 
 // 5.4 — on a directory, r lists the names and x lets you through.
-const box = lsRow(outputOf(s4, 'ls -ld box'))
 const walk = outputOf(s4, 'ls -ld / /home /home/sysops notes.txt').split('\n').filter((l) => /^[d-]/.test(l)).map(lsRow)
 const directories = consoleFrame(
   consoleNode(WEB, s4, { highlight: [rowOf(s4, "ls: cannot access 'box/file'"), rowOf(s4, 'cat: box/file: Permission denied')] }),
   [
-    { type: 'table', id: 'mean', title: 'r, w, x mean something else on a directory', tone: 'ingest', fill: true, columns: ['bit', 'on a file', 'on a directory'], rows: [
-      ['r', 'read its contents', 'list the names in it'],
-      ['w', 'change its contents', 'create, rename, delete entries'],
-      { id: 'x', cells: ['x', 'run it as a program', 'pass through it: open what is inside'], tone: 'ingest' },
-    ] },
-    { type: 'table', id: 'trial', title: `box at ${box.mode}, then drwx------`, tone: 'consume', fill: true, columns: ['tried', 'needs', 'result'], rows: [
-      ['ls box', 'r on box', `the name: ${read(s4, /Permission denied\n(\w+)\n/)} — but no details`],
-      ['cat box/file', 'x on box', read(s4, /\$ cat box\/file\n(cat: [^\n]+)/)],
-      { id: 'ok', cells: ['chmod 700 box; cat box/file', 'x on box', read(s4, /chmod 700 box\n.*cat box\/file\n(\w+)/)], tone: 'store' },
-    ] },
-    { type: 'table', id: 'walk', title: 'The walk to ~/notes.txt, for another user (others)', tone: 'store', fill: true, columns: ['step', 'mode', 'others may', 'so'], rows: walk.map((w, i) => {
+    { type: 'group', id: 'walk', title: 'The walk to ~/notes.txt, for another user', icon: 'folder', tone: 'store', children: walk.map((w, i) => {
       const t = w.mode.slice(7, 10), last = i === walk.length - 1, ok = last ? t[0] === 'r' : t[2] === 'x'
-      return { id: `w${i}`, cells: [w.name, w.mode, last ? (t[0] === 'r' ? 'read' : 'not read') : (t[2] === 'x' ? 'pass' : 'not pass'), ok ? 'on' : 'stopped here'], tone: ok ? undefined : 'consume' as const }
+      return { type: 'item' as const, id: `w${i}`, title: w.name, sub: `${w.mode} — others ${t}: ${last ? (ok ? 'may read' : 'may not read') : (ok ? 'may pass through' : 'may not pass: stopped here')}`, icon: last ? 'file' : 'folder', tone: ok ? undefined : 'consume' as const }
     }) },
-    { type: 'note', id: 'note', tone: 'ingest', text: 'A user needs x on every directory along a path, then r on the file. notes.txt is r for others — but /home/sysops lets others nothing, so the walk stops there. When nginx answers 403 later, check the whole path for www-data.' },
+    { type: 'table', id: 'mean', title: 'r, w, x mean something else on a directory', tone: 'ingest', fill: true, columns: ['bit', 'on a file', 'on a directory'], rows: [
+      ['r', 'read it', 'list the names'],
+      ['w', 'change it', 'add, rename, delete'],
+      { id: 'x', cells: ['x', 'run it', 'pass through it'], tone: 'ingest' },
+    ] },
   ],
+  walk.slice(1).map((_, i) => ({ from: `w${i}`, to: `w${i + 1}` })),
 )
 
 // 5.5 — sudo: what it allows, the rule, and the cached password.
 const rule = read(s5, /^(sysops ALL=\(ALL\) ALL)$/m)
 const asks = (s5.match(/\[sudo\] password for sysops:/g) ?? []).length
+const sudoRuns = (s5.match(/\$ sudo /g) ?? []).length
 const sudo = consoleFrame(
   consoleNode(WEB, s5, { highlight: [rowOf(s5, '(ALL) ALL'), rowOf(s5, rule)] }),
   [
-    { type: 'table', id: 'rule', title: `The rule: ${rule}`, tone: 'consume', fill: true, columns: ['part', 'means'], rows: [
-      ['sysops', 'who the rule is for'],
-      ['ALL=', 'on any host this file is read on'],
-      ['(ALL)', 'as any user: root, or another with -u'],
-      ['ALL', 'any command'],
+    { type: 'group', id: 'rule', title: `${read(s5, /sudoers\.d\n(\S+)/)}: ${rule}`, icon: 'shield', tone: 'consume', children: [
+      { type: 'item', id: 'who', title: 'sysops', sub: 'who the rule is for', icon: 'user' },
+      { type: 'item', id: 'host', title: 'ALL=', sub: 'on any host this file is read on', icon: 'server' },
+      { type: 'item', id: 'as', title: '(ALL)', sub: 'as any user: root, or another with -u', icon: 'users' },
+      { type: 'item', id: 'cmd', title: 'ALL', sub: 'any command', icon: 'terminal', tone: 'consume' },
     ] },
-    { type: 'table', id: 'cache', title: `The password was asked ${asks} times in ${(s5.match(/\$ sudo /g) ?? []).length} sudo commands`, tone: 'infra', fill: true, columns: ['typed', 'asked?', 'why'], rows: [
-      ['sudo -l', 'yes', 'the first sudo in this login'],
-      ['sudo ls, sudo cat, sudo whoami', 'no', 'remembered for a while (15 min)'],
-      { id: 'k', cells: ['sudo -k, then sudo whoami', 'yes', '-k forgets it at once'], tone: 'infra' },
+    { type: 'table', id: 'cache', title: `Your password, asked ${asks} times in ${sudoRuns} sudos`, tone: 'infra', fill: true, columns: ['typed', 'asked?'], rows: [
+      ['sudo -l', 'yes: the first sudo'],
+      ['sudo ls, sudo cat, sudo whoami', 'no: remembered'],
+      { id: 'k', cells: ['sudo -k, then sudo whoami', 'yes: -k forgot it'], tone: 'infra' },
     ] },
-    { type: 'table', id: 'where', title: 'Where the rules live', tone: 'source', fill: true, columns: ['file', 'edit with'], rows: [
-      ['/etc/sudoers', 'visudo: checks the syntax before saving'],
-      [`/etc/sudoers.d/${read(s5, /sudoers\.d\n(\S+)/)}`, 'visudo -f — written here by cloud-init'],
-    ] },
-    { type: 'note', id: 'note', tone: 'consume', text: 'sudo asks for YOUR password, not root’s, and logs every command it runs. A broken sudoers file can lock everyone out of root — which is why the editor is visudo.' },
   ],
+  [{ from: 'who', to: 'host' }, { from: 'host', to: 'as' }, { from: 'as', to: 'cmd' }],
 )
 
 // 5.6 — the team's directory: a group, setgid, a new login, umask.
@@ -144,16 +126,24 @@ const dir = lsRow(outputOf(s6, 'ls -ld /srv/sysops.example'))
 const files = outputOf(s6, 'ls -l /srv/sysops.example').split('\n').filter((l) => l.startsWith('-')).map(lsRow)
 const ids = [...s6.matchAll(/^(uid=1000[^\n]+)$/gm)].map((m) => m[1])
 const shared = consoleFrame(
-  consoleNode(WEB, s6, { highlight: [rowOf(s6, "touch: cannot touch"), rowOf(s6, '1001(site)')] }),
+  consoleNode(WEB, s6, {
+    // the setup stays; the login banner and the closing id deploy fold
+    show: [[1, rowOf(s6, 'sudo usermod')], [rowOf(s6, 'sudo chmod 2775'), rowOf(s6, '$ exit')], [rowOf(s6, 'sysops@ops:~$ ssh web-01'), rowOf(s6, 'sysops@ops:~$ ssh web-01')],
+      [rowOf(s6, 'sysops@web-01:~$ id', 2), rowOf(s6, 'index.html', 4)]],
+    highlight: [rowOf(s6, "touch: cannot touch"), rowOf(s6, '1001(site)')],
+  }),
   [
-    { type: 'table', id: 'dir', title: `${dir.mode}  ${dir.owner}:${dir.group}  /srv/sysops.example`, tone: 'ingest', fill: true, columns: COLS, rows: triplets(dir.mode, [dir.owner, `${dir.group}: sysops, deploy`, 'everyone else']) },
-    { type: 'table', id: 'login', title: 'A new group takes a new login', tone: 'consume', fill: true, columns: ['when', 'id says', 'touch'], rows: [
-      ['after usermod -aG site', ids[0].replace(/^.*groups=/, 'groups='), 'Permission denied'],
-      { id: 'after', cells: ['after exit, ssh web-01', ids[1].replace(/^.*groups=/, 'groups='), 'works'], tone: 'store' },
+    { type: 'group', id: 'made', title: `${dir.mode}  ${dir.owner}:${dir.group}: s is setgid`, icon: 'folder', tone: 'ingest', children: [
+      { type: 'item', id: 'dir', title: '/srv/sysops.example', sub: `new files take its group, ${dir.group}`, icon: 'folder' },
+      { type: 'group', id: 'files', bare: true, dir: 'row', children: files.map((f) => (
+        { type: 'item' as const, id: `f-${f.name.split('.')[0]}`, title: f.name, sub: `${f.group}, ${f.mode} — umask ${f.name === 'about.html' ? '022: no group write' : `${read(s6, /\$ umask\n(\d+)/)}`}`, icon: 'file', stack: true, tone: f.name === 'about.html' ? 'consume' as const : 'store' as const })) },
     ] },
-    { type: 'table', id: 'made', title: 'Two new files: setgid gave both the group; umask set the mode', tone: 'store', fill: true, columns: ['file', 'group', 'mode', 'umask'], rows: files.map((f) => ({ id: f.name, cells: [f.name, f.group, f.mode, f.name === 'about.html' ? '022: group may not write' : `${read(s6, /\$ umask\n(\d+)/)}: Debian 13’s default`], tone: f.name === 'about.html' ? 'consume' as const : undefined })) },
-    { type: 'note', id: 'note', tone: 'ingest', text: `The s in ${dir.mode} is setgid on a directory: new files take the directory’s group (site), not the creator’s. deploy is a system account in site with no shell — course 10’s script runs as it.` },
+    { type: 'table', id: 'login', title: 'A new group takes a new login', tone: 'consume', fill: true, columns: ['when', 'touch'], rows: [
+      ['after usermod -aG site', 'denied: id has no site'],
+      { id: 'after', cells: ['after exit, ssh web-01', `works: id lists ${read(ids[1], /(\d+\(site\))/)}`], tone: 'store' },
+    ] },
   ],
+  files.map((f) => ({ from: 'dir', to: `f-${f.name.split('.')[0]}` })),
 )
 
 export const usersScenes: Record<string, SceneModel> = {
