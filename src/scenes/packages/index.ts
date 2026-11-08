@@ -23,10 +23,9 @@ function versions(policy: string) {
 }
 
 // 3.1 — where packages come from. The Get rows of `apt update` fold; the sources file and the policy stay.
-const policy1 = versions(outputOf(s1, 'apt-cache policy nginx'))
 const managerDoes = consoleFrame(
   consoleNode(WEB, s1, {
-    show: [[1, rowOf(s1, 'Get:2') - 1], [rowOf(s1, 'Fetched'), s1.trimEnd().split('\n').length]],
+    show: [[1, rowOf(s1, '$ sudo apt update') + 1], [rowOf(s1, 'Fetched'), s1.trimEnd().split('\n').length]],
     highlight: [rowOf(s1, 'URIs:'), rowOf(s1, 'Candidate:')],
   }),
   [
@@ -43,17 +42,15 @@ const managerDoes = consoleFrame(
       ['Components: main', 'the free software Debian supports'],
       ['Signed-By:', 'the key that proves the lists are Debian’s'],
     ] },
-    { type: 'table', id: 'policy', title: 'apt-cache policy nginx: two versions on offer', tone: 'store', fill: true, columns: ['version', 'from', ''], rows:
-      policy1.map((v) => ({ id: v.version, cells: [v.version, v.from, v.version === read(s1, /Candidate: (\S+)/) ? 'the candidate: newest' : ''], tone: v.version === read(s1, /Candidate: (\S+)/) ? 'store' as const : undefined })) },
   ],
   [{ from: 'archive', to: 'index' }, { from: 'index', to: 'apt' }, { from: 'apt', to: 'dpkg' }],
 )
 
 // 3.2 — the install. The download and unpack rows fold; the plan, the question and the result stay.
-const header = (name: string) => read(s2, new RegExp(`^${name}: ([^\\n]+)$`, 'm'))
 const installNginx = consoleFrame(
   consoleNode(WEB, s2, {
-    show: [[1, rowOf(s2, 'Continue?')], [rowOf(s2, 'Created symlink'), s2.trimEnd().split('\n').length]],
+    show: [[1, rowOf(s2, 'Continue?')], [rowOf(s2, 'Created symlink'), rowOf(s2, 'Created symlink') + 1],
+      [rowOf(s2, '$ curl -sI'), rowOf(s2, 'Server:')], [rowOf(s2, 'Content-Type'), rowOf(s2, 'Content-Length')], [s2.trimEnd().split('\n').length, s2.trimEnd().split('\n').length]],
     highlight: [rowOf(s2, 'Continue?'), rowOf(s2, 'HTTP/1.1')],
   }),
   [
@@ -68,12 +65,6 @@ const installNginx = consoleFrame(
       ['space on disk', read(s2, /Space needed: (\S+ \S+)/)],
       ['asked', 'Continue? [Y/n] — Enter alone means Y'],
     ] },
-    { type: 'table', id: 'answer', title: 'curl -sI localhost: nginx is already serving', tone: 'store', fill: true, columns: ['header', 'value'], rows: [
-      { id: 'status', cells: ['status', read(s2, /HTTP\/1\.1 ([^\n]+)/)], tone: 'store' },
-      ['Server', header('Server')],
-      ['Content-Type', header('Content-Type')],
-      ['Content-Length', `${header('Content-Length')} bytes: the welcome page`],
-    ] },
   ],
   [{ from: 'nginx', to: 'common', label: 'depends on' }],
 )
@@ -81,46 +72,44 @@ const installNginx = consoleFrame(
 // 3.3 — what the two packages put where, and the service they left running.
 const program = outputOf(s3, 'dpkg -L nginx').split('\n').filter((l) => /^\/usr\/(sbin|share\/man)\/.+[^/]$/.test(l) && !l.endsWith('man8'))
 const logs = outputOf(s3, 'ls -l /var/log/nginx').split('\n').filter((l) => l.startsWith('-')).map((l) => l.trim().split(/\s+/))
+const conf = read(s3, /nginx-common: (\S+)/)
 const putWhere = consoleFrame(
-  consoleNode(WEB, s3, { highlight: [rowOf(s3, '/usr/sbin/nginx'), rowOf(s3, 'nginx-common: /etc/nginx/nginx.conf')] }),
+  consoleNode(WEB, s3, {
+    // dpkg -L's bare directory rows fold; the program, the docs and the manual page stay
+    show: [[1, 1], [rowOf(s3, '/usr/sbin/nginx'), rowOf(s3, '/usr/sbin/nginx')], [rowOf(s3, 'changelog.Debian.gz'), rowOf(s3, '/copyright')], [rowOf(s3, 'nginx.8.gz'), s3.trimEnd().split('\n').length]],
+    highlight: [rowOf(s3, '/usr/sbin/nginx'), rowOf(s3, 'nginx-common: /etc/nginx/nginx.conf')],
+  }),
   [
-    { type: 'table', id: 'owner', title: 'Which package put which file', tone: 'ingest', fill: true, columns: ['file', 'package', 'is'], rows: [
-      ...program.map((f) => [f, 'nginx', f.includes('/sbin/') ? 'the program' : 'its manual page']),
-      [read(s3, /nginx-common: (\S+)/), 'nginx-common', 'its main settings'],
-    ] },
-    { type: 'group', id: 'places', bare: true, dir: 'row', children: [
+    { type: 'group', id: 'places', title: 'Each kind of file in its place', icon: 'folder', tone: 'ingest', dir: 'row', children: [
       // ls -F marks a directory with / — the terminal says which is which, not a guess from the name
       { type: 'tree', id: 'etc', title: '/etc/nginx (ls -F)', entries: outputOf(s3, 'ls -F /etc/nginx').trim().split(/\s+/).sort()
         .map((n) => (n.endsWith('/') ? { name: n.slice(0, -1), folder: true, state: n.startsWith('sites') ? 'active' as const : 'muted' as const } : { name: n, state: n === 'nginx.conf' ? 'active' as const : 'muted' as const })) },
-      { type: 'table', id: 'data', title: 'Its data and its logs', tone: 'store', fill: true, columns: ['file', 'owner', 'mode'], rows: [
-        [`/var/www/html/${outputOf(s3, 'ls /var/www/html').trim()}`, 'root', 'the page curl got'],
-        ...logs.map((f) => [`/var/log/nginx/${f[8]}`, `${f[2]}:${f[3]}`, f[0]]),
-      ] },
+      { type: 'table', id: 'data', title: '/var/log/nginx (ls -l)', tone: 'store', fill: true, columns: ['log', 'owner', 'mode'], rows: logs.map((f) => [f[8], `${f[2]}:${f[3]}`, f[0]]) },
     ] },
-    { type: 'table', id: 'svc', title: 'And it is running', tone: 'serve', fill: true, columns: ['asked', 'answer', 'means'], rows: [
-      ['systemctl is-active nginx', read(s3, /is-active nginx\n(\S+)/), 'running now'],
-      ['systemctl is-enabled nginx', read(s3, /is-enabled nginx\n(\S+)/), 'starts at every boot — course 7'],
+    { type: 'table', id: 'owner', title: 'Which package put which file (dpkg)', tone: 'ingest', fill: true, columns: ['file', 'package'], rows: [
+      ...program.map((f) => [f, 'nginx']),
+      { id: 'conf', cells: [conf, 'nginx-common'], tone: 'store' },
     ] },
   ],
 )
 
 // 3.4 — installed vs candidate; update vs upgrade; manual vs automatic.
-const policy4 = versions(outputOf(s4, 'apt-cache policy nginx'))
+// the *** row is the installed version; apt-cache says it is also the candidate
+const installed = versions(outputOf(s4, 'apt-cache policy nginx')).find((v) => v.installed)!
+if (read(s4, /Candidate: (\S+)/) !== installed.version) throw new Error('3.4: the installed nginx is not the candidate')
 const manual = outputOf(s4, 'apt-mark showmanual nginx nginx-common').trim().split(/\s+/)
 const updates = consoleFrame(
   consoleNode(WEB, s4, { highlight: [rowOf(s4, 'Installed:'), rowOf(s4, ' *** '), rowOf(s4, 'Upgrading: 0')] }),
   [
-    { type: 'table', id: 'policy', title: 'apt-cache policy nginx, after the install', tone: 'store', fill: true, columns: ['version', 'from', 'state'], rows:
-      policy4.map((v) => ({ id: v.version, cells: [v.version, v.from, v.installed ? '*** installed' : 'older'], tone: v.installed ? 'store' as const : undefined })) },
-    { type: 'table', id: 'verbs', title: 'Three verbs that sound alike', tone: 'ingest', fill: true, columns: ['command', 'changes', 'here'], rows: [
-      ['apt update', 'only the lists of what exists', 'run in 3.1'],
-      ['apt upgrade', 'installed packages, to their candidates', read(s4, /(Upgrading: \d+)/)],
-      ['apt install x', 'adds x and what x needs', 'run in 3.2'],
+    { type: 'group', id: 'verbs', title: 'Three verbs that sound alike', icon: 'package', tone: 'ingest', children: [
+      { type: 'item', id: 'update', title: 'apt update', sub: 'refreshes the lists of what exists; installs nothing', icon: 'database' },
+      { type: 'item', id: 'upgrade', title: `apt upgrade — ${read(s4, /(Upgrading: \d+)/)}`, sub: `moves installed packages to their candidates; nginx ${installed.version} already is one`, icon: 'workflow', tone: 'store' },
+      { type: 'item', id: 'install', title: 'apt install x', sub: 'adds x, and whatever x needs', icon: 'package' },
     ] },
-    { type: 'table', id: 'marks', title: 'apt-mark showmanual nginx nginx-common', tone: 'infra', fill: true, columns: ['package', 'installed', 'removed with apt autoremove'], rows: ['nginx', 'nginx-common'].map((p) =>
-      manual.includes(p) ? [p, 'manually: you asked', 'never'] : [p, 'automatically: a dependency', 'once nothing needs it']) },
-    { type: 'note', id: 'note', tone: 'infra', text: 'This archive is frozen, so nothing is ever upgradable here — and this lab turned automatic updates off so nothing changes during a recording. A real server runs apt update and apt upgrade regularly, or leaves it to unattended-upgrades.' },
+    { type: 'table', id: 'marks', title: 'apt-mark showmanual nginx nginx-common', tone: 'infra', fill: true, columns: ['package', 'installed', 'autoremove'], rows: ['nginx', 'nginx-common'].map((p) =>
+      manual.includes(p) ? [p, 'manually', 'never'] : [p, 'as a dependency', 'once unneeded']) },
   ],
+  [{ from: 'update', to: 'upgrade' }],
 )
 
 export const packagesScenes: Record<string, SceneModel> = {
