@@ -20,10 +20,10 @@ NARRATED AND RECORDED 2026-10-31: all 67 wavs in, every course captured at 3840Ã
 into the single YouTube film (`npm run film` â†’ 1:37:55, 67 chapters). Cover and descriptions built.
 Awaiting the owner's review of the whole course.
 
-**2026-11-08: FRAME V2, piloted on course 4 `text`** (LINUX-COURSE-PLAN "Decided (2026-11-08)").
-`text` is on the new grid and checks green; the other ten courses are NOT yet ported and fail
-`check-content` (the strict picture rule, consoles over 29 rows) until they are. The recording and
-the film above are v1; every course is re-recorded once all eleven are ported.
+**2026-11-08: FRAME V2, all eleven courses** (LINUX-COURSE-PLAN "Decided (2026-11-08)"): every
+section on the shared grid, checks green, every frame looked at. Awaiting the owner's review. The
+recording and the film above are v1: one wav to regenerate (`text/editing-a-file`), then every
+course is re-recorded.
 
 ## Every output is real
 

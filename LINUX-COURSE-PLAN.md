@@ -325,10 +325,17 @@ tables in the picture. Python and TypeScript moved to graphl-flow 0.10's shared 
 follows: engine 0.11.0, shell 1.1.0, the console frame above, the strict picture rule. Kept: 80
 columns (the transcripts are real 80-column output) and every capture (nothing is re-run on a VM).
 
-Piloted on course 4 `text` (owner review pending), then the other ten. Narration edited for v2 (its
-wav predates the edit and must be regenerated before re-recording):
+Piloted on course 4 `text`, then ported to the other ten (2026-11-08): all 67 sections, 61 console
+frames on one fit. Each picture lost what the console already proved; what the narration names on
+screen ("the table", "the chart", "on the right") was kept. Full scenes (◆) were laid out across
+the frame so they scale up. Checks added while porting: a picture must stay inside its column
+(check-render), a `show` range must run forwards (check-content: two consoles had silently dropped
+rows). Fixed on the way, wrong in v1 too: 2.7's `wc -l` cell (read 3, the transcript says 28), and
+10.6's shellcheck messages cut at the 80-column wrap (now each code with a short gloss).
+
+Narration edited for v2 (its wav predates the edit and must be regenerated before re-recording):
 
 - `text/editing-a-file`: dropped "Back at the prompt, cat shows the note was saved." (the picture
   no longer shows the `cat`).
 
-Every course is re-recorded once all eleven are on v2, because the frame changed.
+Every course is re-recorded, because the frame changed.
