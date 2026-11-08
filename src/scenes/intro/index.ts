@@ -18,11 +18,6 @@ const kernelAndDistro: SceneModel = consoleFrame(
       { type: 'item', id: 'kernel', icon: 'linux', title: `Linux ${kernel.split('+')[0]}`, sub: 'the kernel: processes, memory, files, devices, the network — uname -r', tone: 'infra' },
       { type: 'item', id: 'hw', icon: 'cpu', title: `The machine: ${arch}`, sub: 'a virtual machine, 2 CPUs and 2 GiB — uname -m', tone: 'neutral' },
     ] },
-    { type: 'table', id: 'source', title: 'Where each answer comes from', tone: 'infra', fill: true, columns: ['asked', 'reads', 'answer'], rows: [
-      { id: 'osr', cells: ['cat /etc/os-release', 'a file the distribution ships', distro], tone: 'ingest' },
-      { id: 'unr', cells: ['uname -r', 'the running kernel’s release', kernel], tone: 'infra' },
-      { id: 'unm', cells: ['uname -m', 'the hardware the kernel runs on', arch] },
-    ] },
     { type: 'table', id: 'family', title: 'The same kernel, different distributions', tone: 'ingest', fill: true, columns: ['family', 'distributions', 'in this course'], rows: [
       { id: 'deb', cells: ['Debian', 'Debian, Ubuntu', 'web-01, courses 1–10'], tone: 'ingest' },
       { id: 'rh', cells: ['Red Hat', 'RHEL, Rocky, AlmaLinux, Fedora', 'web-02, course 11'] },
