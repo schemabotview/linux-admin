@@ -39,6 +39,10 @@ for (const [id, scene] of Object.entries(SCENES)) {
     if (!rows) continue
     // Rows as graphl-flow DRAWS them: with `show`, the kept rows plus one fold row per skipped run.
     // A long real output (an apt install) is folded for display, never edited.
+    // A show range must run forwards and stay inside the transcript: an anchor that matched an earlier
+    // row (rowOf's first hit) inverted 9.1's middle range, and the console silently dropped mkfs and
+    // lsblk -f with every other check green.
+    for (const [a, b] of node.show ?? []) if (!(a >= 1 && a <= b && b <= rows.length)) problems.push(`scene ${id}  '${node.id}' show range [${a}, ${b}] is empty or outside its ${rows.length} rows — check the rowOf anchors`)
     const keep = node.show && new Set(node.show.flatMap(([a, b]) => Array.from({ length: b - a + 1 }, (_, i) => a + i)))
     const drawn = keep ? rows.filter((_, i) => keep.has(i + 1) || i === 0 || keep.has(i)).length : rows.length // a skipped row counts once per run: when the row before it was kept (or it is first)
     if (node.id === 'console' && drawn > FRAME.CONSOLE.rows) problems.push(`scene ${id}  the console draws ${drawn} rows; the pty had ${FRAME.CONSOLE.rows} — fold with show`)

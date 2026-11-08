@@ -109,7 +109,7 @@ const sudoLine = read(s5, /sudo\[\d+\]:\s+(sysops : TTY=[^\n]+\n[^\n]+)/).replac
 const sudoFields = sudoLine.split(' : ').slice(1).join(' : ').split(' ; ').map((p) => [p.split('=')[0], p.split('=').slice(1).join('=')])
 const journal = consoleFrame(
   consoleNode(WEB, s5, {
-    show: [[1, 1], [rowOf(s5, 'Starting nginx.service', 2), rowOf(s5, 'test failed')], [rowOf(s5, 'Failed to start'), rowOf(s5, '$ journalctl _COMM=sudo')],
+    show: [[1, 1], [rowOf(s5, 'Starting nginx.service'), rowOf(s5, 'test failed')], [rowOf(s5, 'Failed to start'), rowOf(s5, '$ journalctl _COMM=sudo')],
       [rowOf(s5, 'COMMAND=') - 1, rowOf(s5, 'COMMAND=')], [rowOf(s5, '$ journalctl --disk-usage'), s5.trimEnd().split('\n').length]],
     highlight: [rowOf(s5, 'Failed to start', 2), rowOf(s5, 'COMMAND=') - 1],
   }),
