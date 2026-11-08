@@ -6,7 +6,7 @@ A GraphL concept app: **Linux administration by running a web server.** The Syso
 `sysops.example` from `web-01` (Debian 13, courses 1–10), then does the job again on `web-02` (Rocky
 10.2, course 11). **`LINUX-COURSE-PLAN.md` is the source of truth**: change it first, never drift.
 
-Engine `@graphlearning/graphl-flow` ^0.8.0, shell `@graphlearning/shell` ^1.0.4.
+Engine `@graphlearning/graphl-flow` 0.11.0, shell `@graphlearning/shell` 1.1.0, pinned exactly.
 
 ## Status
 
@@ -19,6 +19,11 @@ narration, checks green, every frame looked at.
 NARRATED AND RECORDED 2026-10-31: all 67 wavs in, every course captured at 3840×2160, and combined
 into the single YouTube film (`npm run film` → 1:37:55, 67 chapters). Cover and descriptions built.
 Awaiting the owner's review of the whole course.
+
+**2026-11-08: FRAME V2, piloted on course 4 `text`** (LINUX-COURSE-PLAN "Decided (2026-11-08)").
+`text` is on the new grid and checks green; the other ten courses are NOT yet ported and fail
+`check-content` (the strict picture rule, consoles over 29 rows) until they are. The recording and
+the film above are v1; every course is re-recorded once all eleven are ported.
 
 ## Every output is real
 
@@ -37,10 +42,14 @@ transcript shows; after a replay changes a value, grep the narration for it.
 
 ## Frames
 
-The console frame (`src/scenes/frame.ts`, graphl-flow's `console-frame` study): fixed console |
-fixed picture, one fit for every frame. No edges between the columns. The picture's parts sit in ONE
-group centred in the column; check-render fails a picture under 45% of the column — fill it with real
-material from the transcript, never with spacing between parts.
+The console frame v2 (`src/scenes/frame.ts`, graphl-flow 0.10's `console-frame` study): the shared
+1344 × 756 grid, an 80 × 29 console (760px) | a 574px picture, one fit for every frame. No edges
+between the columns. A transcript over 29 drawn rows is windowed with `show` (check-content counts
+folds); a `tty` grab (43 rows) is cropped to its top rows + `foot` bottom chrome rows. The picture is
+STRICT: at most two parts, and with two, one is a diagram (group or plot) and the other at most one
+table (check-content). Its parts sit in ONE group centred in the column; check-render fails a picture
+under 45% of the column — fill it with real material from the transcript, never with spacing.
+`node scripts/check-render.mjs <course>` checks one course.
 Full scenes (◆) are their own sections.
 
 ## Checks, before handing over

@@ -21,7 +21,8 @@
 //
 // A floor, not proof: a frame can pass every assertion and read badly. Capture and look.
 //
-// Run: npm run check (after check-content). Boots its own vite on :5189.
+// Run: npm run check (after check-content), or `node scripts/check-render.mjs <course>` for one course.
+// Boots its own vite on :5189.
 import { chromium } from 'playwright'
 import { createServer } from 'vite'
 import { isConsoleFrame, loadRegistry, nodesOf } from './registry.mjs'
@@ -34,7 +35,10 @@ const ICON_MIN_PX = +(process.env.ICON_MIN_PX ?? 32)
 const PICTURE_FILL = +(process.env.PICTURE_FILL ?? 0.45)
 
 const { COURSES, SCENES } = await loadRegistry()
+// `node scripts/check-render.mjs text shell-man` checks only these slugs (or slug prefixes: a course).
+const asked = process.argv.slice(2)
 const sections = Object.values(COURSES).flatMap((c) => c.sections.map((s) => ({ slug: `${c.id}-${s.id}`, section: s, scene: SCENES[s.scene] })))
+  .filter(({ slug }) => !asked.length || asked.some((a) => slug.startsWith(a)))
 
 const problems = []
 const frames = []

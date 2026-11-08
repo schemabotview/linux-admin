@@ -18,8 +18,9 @@ Why a web server:
   a certificate, a full disk needs storage, the 403 on Rocky needs SELinux.
 - **The ending is checkable**: `curl https://sysops.example` answers, on Debian and then on Rocky.
 
-Engine `@graphlearning/graphl-flow` (≥ 0.8: consoles, Debian/Red Hat prompts, `tty` screens,
-`ini`/`nginx`/`nft` highlighting, Linux icons), shell `@graphlearning/shell` (1.x), both pinned.
+Engine `@graphlearning/graphl-flow` 0.11.0 (consoles, Debian/Red Hat prompts, `tty` screens,
+`ini`/`nginx`/`nft` highlighting, Linux icons; 0.10's one frame grid), shell `@graphlearning/shell`
+1.1.0, both pinned exactly.
 Engine 0.7 was built for exactly this course: its `console-frame` study and `code/linux.ts`
 fixtures are real captures from Debian 13 and Rocky 10.2 VMs.
 
@@ -148,10 +149,19 @@ local mirror 10–20 s, a reboot ~10 s. First full build (bases + mirror + all 6
 
 ## Frames
 
-- **Console frame** (graphl-flow `console-frame` study): a fixed 80 × 43 console on the left and the
-  picture of what it just showed on the right. Both columns are fixed (`SAME_FIT`), so every frame
-  lands on the same zoom. No edges between the columns: `focus` highlights a console line.
-- **Tty frame**: `top`, `less`, `man`, `vim` take the console's slot at the same size.
+- **Console frame** (graphl-flow 0.10's `console-frame` study, frame v2 — Decision below): on the
+  ONE grid every GraphL frame shares (1344 × 756 at a 1% margin, ≈ 42px console text at 4K), an
+  80-column console 29 rows tall (760px) on the left and the picture of what it just showed on the
+  right (574px). Both columns are fixed (`SAME_FIT`), so every frame lands on the same zoom. No edges
+  between the columns: `focus` highlights a console line. A transcript longer than 29 rows is
+  windowed with `show` around what the section teaches (each fold costs a row), never edited.
+- **The picture, strict**: at most two parts, and with two, one is a diagram (a group or a plot) and
+  the other at most one table. A lone table may be the picture; two tables, or a table and a note,
+  may not. What does not fit is cut (the console already proves it) or becomes its own section or a
+  ◆ full scene. `check-content` counts it; the narration only names what is on screen.
+- **Tty frame**: `top`, `less`, `man`, `vim` take the console's slot at the same size. The grab is
+  the 43-row pty's; the frame draws its first rows and its bottom chrome (`foot`: vim's status line,
+  nano's status and two help rows), which is what a 29-row terminal of the same width draws.
 - **Config frame**: a unit file, nginx site or `nftables.conf` as a `code` node (`ini`, `nginx`,
   `nft`), copied from the VM.
 - **◆ full scene**: a canonical big picture (the filesystem tree, file descriptors, fork/exec, boot,
@@ -306,3 +316,19 @@ npm run shots -- <course>                            # then LOOK
 - **One vim section** (4.7).
 - **One VM at a time**; `ops` is a namespace on the host, the lab services are host processes.
 - **Rocky is the final course**; repo `schemabotview/linux-admin`.
+
+## Decided (2026-11-08): frame v2
+
+The v1 console frame was its own grid (1930 × 1090, a 43-row console however short the transcript)
+and zoomed ≈ 1.9 at 4K: ≈ 28px console text, two thirds of a short console empty, three or four
+tables in the picture. Python and TypeScript moved to graphl-flow 0.10's shared grid; this course
+follows: engine 0.11.0, shell 1.1.0, the console frame above, the strict picture rule. Kept: 80
+columns (the transcripts are real 80-column output) and every capture (nothing is re-run on a VM).
+
+Piloted on course 4 `text` (owner review pending), then the other ten. Narration edited for v2 (its
+wav predates the edit and must be regenerated before re-recording):
+
+- `text/editing-a-file`: dropped "Back at the prompt, cat shows the note was saved." (the picture
+  no longer shows the `cat`).
+
+Every course is re-recorded once all eleven are on v2, because the frame changed.

@@ -7,7 +7,9 @@
 //      gap it crosses and moves both off the shared template.
 //   4. A console holds what the pty drew: at most CONSOLE.rows DRAWN rows (`show` folds count one) of at most CONSOLE.cols columns
 //      (a wider row would mean the transcript was edited, not captured).
-//   5. Once a course has narration audio, every section of it has its wav.
+//   5. A console frame's picture follows the STRICT rule (frame.ts): at most two parts, and with two,
+//      one of them is a diagram (a group or a plot) — never two tables, never a table and a note.
+//   6. Once a course has narration audio, every section of it has its wav.
 //
 // Run: npm run check
 import { existsSync, readdirSync, statSync } from 'node:fs'
@@ -44,6 +46,10 @@ for (const [id, scene] of Object.entries(SCENES)) {
     if (wide) problems.push(`scene ${id}  '${node.id}' has a ${wide.length}-column row; the pty was ${FRAME.CONSOLE.cols} wide — "${wide.slice(0, 40)}…"`)
   }
   if (!isConsoleFrame(scene)) continue
+  const parts = scene.nodes[1].children[0].children
+  const diagram = (n) => n.type === 'group' || n.type === 'plot'
+  if (parts.length > 2) problems.push(`scene ${id}  the picture has ${parts.length} parts (${parts.map((n) => n.type).join(', ')}) — one diagram and at most one table; split the section`)
+  else if (parts.length === 2 && !parts.some(diagram)) problems.push(`scene ${id}  the picture is ${parts.map((n) => n.type).join(' + ')} — with two parts, one is a diagram (group or plot)`)
   const top = new Map(all.map(({ node, top }) => [node.id, top]))
   for (const e of scene.edges ?? [])
     for (const end of [e.from, e.to])
